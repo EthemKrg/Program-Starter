@@ -1,0 +1,135 @@
+﻿<Window x:Class="ProgramStarter.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:ProgramStarter.App.ViewModels"
+        Title="Program Starter"
+        MinWidth="900" MinHeight="560"
+        Width="960" Height="640"
+        Background="{StaticResource BackgroundBrush}"
+        FontFamily="{StaticResource DefaultFontFamily}"
+        WindowStartupLocation="CenterScreen"
+        TextOptions.TextFormattingMode="Display"
+        SnapsToDevicePixels="True">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+
+        <!-- Inverted BooleanToVisibilityConverter via simple style approach -->
+        <Style x:Key="VisibleWhenFalse" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Visible" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasGroups}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- No-Groups Empty State -->
+        <DataTemplate x:Key="NoGroupsEmptyState">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!-- Placeholder star icon -->
+                <Viewbox Width="48" Height="48" Margin="0,0,0,16">
+                    <Canvas Width="24" Height="24">
+                        <Path Data="M12,2 L14,8 L20,8 L15,12 L17,18 L12,14 L7,18 L9,12 L4,8 L10,8 Z"
+                              Fill="{StaticResource TextMutedBrush}" />
+                    </Canvas>
+                </Viewbox>
+                <TextBlock Text="No groups yet."
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"
+                           Margin="0,0,0,8" />
+                <TextBlock Text="Create your first launch group."
+                           Style="{StaticResource EmptyStateTextStyle}"
+                           Margin="0,0,0,20" />
+                <Button Content="+ Add Group"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        HorizontalAlignment="Center"
+                        IsEnabled="False" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Group item template -->
+        <DataTemplate x:Key="GroupItemTemplate">
+            <Border Style="{StaticResource SidebarItemStyle}">
+                <TextBlock Text="{Binding Name}"
+                           Style="{StaticResource BodyTextStyle}"
+                           TextTrimming="CharacterEllipsis" />
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Border Grid.Column="0" Background="{StaticResource SidebarBrush}">
+            <Grid Margin="0,28,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Sidebar Header -->
+                <TextBlock Grid.Row="0"
+                           Text="Groups"
+                           Style="{StaticResource SectionTitleStyle}"
+                           Margin="16,0,16,16" />
+
+                <!-- Group List -->
+                <ItemsControl Grid.Row="1"
+                              ItemsSource="{Binding Groups}"
+                              ItemTemplate="{StaticResource GroupItemTemplate}"
+                              Margin="8,0,8,0" />
+
+                <!-- Add Group Button -->
+                <Button Grid.Row="2"
+                        Content="+ Add Group"
+                        Style="{StaticResource GhostButtonStyle}"
+                        Margin="8,8,8,16"
+                        IsEnabled="False" />
+            </Grid>
+        </Border>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Column="1" Margin="28,28,28,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- No-Groups Empty State (visible when HasGroups is false) -->
+            <ContentControl Grid.Row="0" Grid.RowSpan="3"
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource NoGroupsEmptyState}"
+                            Style="{StaticResource VisibleWhenFalse}" />
+
+            <!-- Content shown when groups exist (hidden in Phase 0, used in Phase 2+) -->
+            <StackPanel Grid.Row="0"
+                        Visibility="{Binding HasGroups, Converter={StaticResource BoolToVisConverter}}">
+                <TextBlock Text="Select a group to manage apps"
+                           Style="{StaticResource MainTitleStyle}" />
+            </StackPanel>
+
+            <!-- Status Bar -->
+            <Border Grid.Row="2"
+                    Height="32"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="0,1,0,0"
+                    CornerRadius="0,0,8,8">
+                <TextBlock Text="{Binding StatusMessage, FallbackValue='Ready'}"
+                           Style="{StaticResource MutedTextStyle}"
+                           VerticalAlignment="Center"
+                           Margin="12,0" />
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

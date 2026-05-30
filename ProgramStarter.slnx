@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ProgramStarter.App/ProgramStarter.App.csproj" />
+  <Project Path="ProgramStarter.Tests/ProgramStarter.Tests.csproj" />
+</Solution>
