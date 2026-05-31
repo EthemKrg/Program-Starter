@@ -5,25 +5,23 @@ using ProgramStarter.App.Services;
 
 namespace ProgramStarter.Tests.Config;
 
+[CollectionDefinition("ConfigTests", DisableParallelization = true)]
+public sealed class ConfigTestsCollection
+{
+}
+
 /// <summary>
-/// Focused tests for JsonConfigService covering:
-/// - Missing config creates default and saves it
-/// - Save/load round-trip preserves data
-/// - Corrupted config is backed up and replaced with default
-/// - Future schema version is not overwritten
-/// - Null groups are normalized to empty list
-/// - Full normalization: null Apps, empty IDs, blank names, negative delay, empty theme, orphaned group ref
-/// - Save writes valid camelCase JSON
-/// - Logger is called on key events
+/// Focused tests for JsonConfigService...
 /// </summary>
+[Collection("ConfigTests")]
 public class JsonConfigServiceTests : IDisposable
 {
     private readonly string _testRoot;
 
     public JsonConfigServiceTests()
     {
-        // Each test gets its own isolated temp directory
         _testRoot = Path.Combine(Path.GetTempPath(), "ProgramStarter_Tests_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(_testRoot);
         AppPaths.SetTestModeRoot(_testRoot);
     }
 
@@ -31,7 +29,6 @@ public class JsonConfigServiceTests : IDisposable
     {
         AppPaths.ResetRoot();
 
-        // Clean up test directory
         if (Directory.Exists(_testRoot))
         {
             try { Directory.Delete(_testRoot, recursive: true); }
@@ -42,65 +39,56 @@ public class JsonConfigServiceTests : IDisposable
     [Fact]
     public void Load_WhenConfigMissing_CreatesDefaultAndSaves()
     {
-        // Arrange
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert - default settings
         Assert.NotNull(settings);
         Assert.Equal(1, settings.SchemaVersion);
         Assert.Empty(settings.Groups);
         Assert.Null(settings.LastSelectedGroupId);
         Assert.Equal("Dark", settings.Theme);
         Assert.Equal(1000, settings.DefaultDelayMilliseconds);
-
-        // Assert - config file was created
         Assert.True(File.Exists(AppPaths.ConfigFilePath));
-
-        // Assert - logger was called
         Assert.Contains(logger.Messages, m => m.Contains("No config file found"));
     }
 
     [Fact]
     public void SaveAndLoad_RoundTrip_PreservesData()
     {
-        // Arrange
         using var logger = new TestLogger();
         var service = CreateService(logger);
-
-        var group = new AppGroup
-        {
-            Id = "test-group-id",
-            Name = "Test Group",
-            Apps = new List<AppEntry>
-            {
-                new()
-                {
-                    Id = "test-app-id",
-                    Name = "Test App",
-                    Path = @"C:\Program Files\Test\test.exe",
-                    IsEnabled = true
-                }
-            }
-        };
 
         var settings = new AppSettings
         {
             SchemaVersion = 1,
-            Groups = new List<AppGroup> { group },
+            Groups = new List<AppGroup>
+            {
+                new()
+                {
+                    Id = "test-group-id",
+                    Name = "Test Group",
+                    Apps = new List<AppEntry>
+                    {
+                        new()
+                        {
+                            Id = "test-app-id",
+                            Name = "Test App",
+                            Path = @"C:\Program Files\Test\test.exe",
+                            IsEnabled = true
+                        }
+                    }
+                }
+            },
             LastSelectedGroupId = "test-group-id",
             Theme = "Dark",
             DefaultDelayMilliseconds = 500
         };
 
-        // Act
         service.Save(settings);
         var loaded = service.Load();
 
-        // Assert
         Assert.NotNull(loaded);
         Assert.Equal(1, loaded.SchemaVersion);
         Assert.Single(loaded.Groups);
@@ -117,40 +105,25 @@ public class JsonConfigServiceTests : IDisposable
     [Fact]
     public void Load_WhenConfigCorrupted_BacksUpAndCreatesDefault()
     {
-        // Arrange
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
-        File.WriteAllText(AppPaths.ConfigFilePath, "This is not valid JSON {{{");
+        WriteConfigJson("This is not valid JSON {{{");
 
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert - default settings returned
         Assert.NotNull(settings);
         Assert.Equal(1, settings.SchemaVersion);
         Assert.Empty(settings.Groups);
-
-        // Assert - corrupted file was backed up (some .corrupted_ file exists)
-        var backupFiles = Directory.GetFiles(AppPaths.AppDataDirectory, "config.corrupted_*");
-        Assert.NotEmpty(backupFiles);
-
-        // Assert - new valid config was written
+        Assert.NotEmpty(Directory.GetFiles(AppPaths.AppDataDirectory, "config.corrupted_*"));
         Assert.True(File.Exists(AppPaths.ConfigFilePath));
-        var reloaded = JsonSerializer.Deserialize<AppSettings>(
-            File.ReadAllText(AppPaths.ConfigFilePath), JsonOptions.Default);
-        Assert.NotNull(reloaded);
-
-        // Assert - logger was called
+        Assert.NotNull(JsonSerializer.Deserialize<AppSettings>(ReadConfigJson(), JsonOptions.Default));
         Assert.Contains(logger.Messages, m => m.Contains("Config file is corrupted"));
     }
 
     [Fact]
     public void Load_WhenFutureSchemaVersion_DoesNotOverwrite()
     {
-        // Arrange
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
         var futureConfig = new AppSettings
         {
             SchemaVersion = 999,
@@ -159,54 +132,41 @@ public class JsonConfigServiceTests : IDisposable
                 new() { Id = "future-group", Name = "Future Group" }
             }
         };
-        var json = JsonSerializer.Serialize(futureConfig, JsonOptions.Default);
-        File.WriteAllText(AppPaths.ConfigFilePath, json);
-        var originalContent = File.ReadAllText(AppPaths.ConfigFilePath);
+        WriteConfigJson(JsonSerializer.Serialize(futureConfig, JsonOptions.Default));
+        var originalContent = ReadConfigJson();
 
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert - returned empty in-memory settings
         Assert.NotNull(settings);
         Assert.Equal(1, settings.SchemaVersion);
         Assert.Empty(settings.Groups);
-
-        // Assert - original config file was NOT overwritten
-        var afterContent = File.ReadAllText(AppPaths.ConfigFilePath);
-        Assert.Equal(originalContent, afterContent);
-        Assert.Contains("schemaVersion", afterContent);
-        Assert.Contains("999", afterContent);
-
-        // Assert - logger warning was called
+        Assert.Equal(originalContent, ReadConfigJson());
+        Assert.Contains("schemaVersion", ReadConfigJson());
+        Assert.Contains("999", ReadConfigJson());
         Assert.Contains(logger.Messages, m => m.Contains("unsupported schema version"));
     }
 
     [Fact]
     public void Load_WhenNullGroups_NormalizesToEmpty()
     {
-        // Arrange
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
-        var settingsWithNullGroups = new Dictionary<string, object?>
+        var json = JsonSerializer.Serialize(new Dictionary<string, object?>
         {
             ["schemaVersion"] = 1,
             ["groups"] = null,
             ["lastSelectedGroupId"] = null,
             ["theme"] = "Dark",
             ["defaultDelayMilliseconds"] = 1000
-        };
-        var json = JsonSerializer.Serialize(settingsWithNullGroups, JsonOptions.Default);
-        File.WriteAllText(AppPaths.ConfigFilePath, json);
+        }, JsonOptions.Default);
+        WriteConfigJson(json);
 
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert
         Assert.NotNull(settings);
         Assert.NotNull(settings.Groups);
         Assert.Empty(settings.Groups);
@@ -215,9 +175,7 @@ public class JsonConfigServiceTests : IDisposable
     [Fact]
     public void Load_WhenGroupHasNullApps_NormalizesToEmptyList()
     {
-        // Arrange: write JSON where "apps" is explicitly null
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
-        var configJson = /*lang=json,strict*/ """
+        WriteConfigJson(/*lang=json,strict*/ """
             {
                 "schemaVersion": 1,
                 "groups": [
@@ -231,16 +189,13 @@ public class JsonConfigServiceTests : IDisposable
                 "theme": "Dark",
                 "defaultDelayMilliseconds": 1000
             }
-            """;
-        File.WriteAllText(AppPaths.ConfigFilePath, configJson);
+            """);
 
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert
         Assert.NotNull(settings);
         Assert.Single(settings.Groups);
         Assert.NotNull(settings.Groups[0].Apps);
@@ -250,9 +205,7 @@ public class JsonConfigServiceTests : IDisposable
     [Fact]
     public void Load_WhenGroupIdEmpty_GeneratesNewId()
     {
-        // Arrange
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
-        var configJson = /*lang=json,strict*/ """
+        WriteConfigJson(/*lang=json,strict*/ """
             {
                 "schemaVersion": 1,
                 "groups": [
@@ -266,29 +219,23 @@ public class JsonConfigServiceTests : IDisposable
                 "theme": "Dark",
                 "defaultDelayMilliseconds": 1000
             }
-            """;
-        File.WriteAllText(AppPaths.ConfigFilePath, configJson);
+            """);
 
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert
         Assert.NotNull(settings);
         Assert.Single(settings.Groups);
         Assert.False(string.IsNullOrWhiteSpace(settings.Groups[0].Id));
-        // Should not be the empty string we wrote; should be a new GUID
         Assert.NotEqual("", settings.Groups[0].Id);
     }
 
     [Fact]
     public void Load_WhenAppIdEmpty_GeneratesNewId()
     {
-        // Arrange
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
-        var configJson = /*lang=json,strict*/ """
+        WriteConfigJson(/*lang=json,strict*/ """
             {
                 "schemaVersion": 1,
                 "groups": [
@@ -309,16 +256,13 @@ public class JsonConfigServiceTests : IDisposable
                 "theme": "Dark",
                 "defaultDelayMilliseconds": 1000
             }
-            """;
-        File.WriteAllText(AppPaths.ConfigFilePath, configJson);
+            """);
 
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert
         Assert.NotNull(settings);
         Assert.Single(settings.Groups);
         Assert.Single(settings.Groups[0].Apps);
@@ -329,9 +273,7 @@ public class JsonConfigServiceTests : IDisposable
     [Fact]
     public void Load_WhenGroupNameBlank_NormalizesToNewGroup()
     {
-        // Arrange
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
-        var configJson = /*lang=json,strict*/ """
+        WriteConfigJson(/*lang=json,strict*/ """
             {
                 "schemaVersion": 1,
                 "groups": [
@@ -345,16 +287,13 @@ public class JsonConfigServiceTests : IDisposable
                 "theme": "Dark",
                 "defaultDelayMilliseconds": 1000
             }
-            """;
-        File.WriteAllText(AppPaths.ConfigFilePath, configJson);
+            """);
 
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert
         Assert.NotNull(settings);
         Assert.Single(settings.Groups);
         Assert.Equal("New Group", settings.Groups[0].Name);
@@ -363,9 +302,7 @@ public class JsonConfigServiceTests : IDisposable
     [Fact]
     public void Load_WhenAppNameBlank_NormalizesToNewApp()
     {
-        // Arrange
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
-        var configJson = /*lang=json,strict*/ """
+        WriteConfigJson(/*lang=json,strict*/ """
             {
                 "schemaVersion": 1,
                 "groups": [
@@ -386,16 +323,13 @@ public class JsonConfigServiceTests : IDisposable
                 "theme": "Dark",
                 "defaultDelayMilliseconds": 1000
             }
-            """;
-        File.WriteAllText(AppPaths.ConfigFilePath, configJson);
+            """);
 
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert
         Assert.NotNull(settings);
         Assert.Single(settings.Groups);
         Assert.Single(settings.Groups[0].Apps);
@@ -405,9 +339,7 @@ public class JsonConfigServiceTests : IDisposable
     [Fact]
     public void Load_WhenDefaultDelayNegative_NormalizesTo1000()
     {
-        // Arrange
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
-        var configJson = /*lang=json,strict*/ """
+        WriteConfigJson(/*lang=json,strict*/ """
             {
                 "schemaVersion": 1,
                 "groups": [],
@@ -415,16 +347,13 @@ public class JsonConfigServiceTests : IDisposable
                 "theme": "Dark",
                 "defaultDelayMilliseconds": -500
             }
-            """;
-        File.WriteAllText(AppPaths.ConfigFilePath, configJson);
+            """);
 
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert
         Assert.NotNull(settings);
         Assert.Equal(1000, settings.DefaultDelayMilliseconds);
     }
@@ -432,9 +361,7 @@ public class JsonConfigServiceTests : IDisposable
     [Fact]
     public void Load_WhenThemeEmpty_NormalizesToDark()
     {
-        // Arrange
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
-        var configJson = /*lang=json,strict*/ """
+        WriteConfigJson(/*lang=json,strict*/ """
             {
                 "schemaVersion": 1,
                 "groups": [],
@@ -442,16 +369,13 @@ public class JsonConfigServiceTests : IDisposable
                 "theme": "",
                 "defaultDelayMilliseconds": 1000
             }
-            """;
-        File.WriteAllText(AppPaths.ConfigFilePath, configJson);
+            """);
 
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert
         Assert.NotNull(settings);
         Assert.Equal("Dark", settings.Theme);
     }
@@ -459,9 +383,7 @@ public class JsonConfigServiceTests : IDisposable
     [Fact]
     public void Load_WhenLastSelectedGroupIdOrphaned_ClearsToNull()
     {
-        // Arrange
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
-        var configJson = /*lang=json,strict*/ """
+        WriteConfigJson(/*lang=json,strict*/ """
             {
                 "schemaVersion": 1,
                 "groups": [
@@ -475,16 +397,13 @@ public class JsonConfigServiceTests : IDisposable
                 "theme": "Dark",
                 "defaultDelayMilliseconds": 1000
             }
-            """;
-        File.WriteAllText(AppPaths.ConfigFilePath, configJson);
+            """);
 
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
-        // Act
         var settings = service.Load();
 
-        // Assert
         Assert.NotNull(settings);
         Assert.Single(settings.Groups);
         Assert.Null(settings.LastSelectedGroupId);
@@ -493,7 +412,6 @@ public class JsonConfigServiceTests : IDisposable
     [Fact]
     public void Save_WritesValidCamelCaseJson()
     {
-        // Arrange
         using var logger = new TestLogger();
         var service = CreateService(logger);
 
@@ -506,15 +424,11 @@ public class JsonConfigServiceTests : IDisposable
             DefaultDelayMilliseconds = 1000
         };
 
-        // Act
         service.Save(settings);
 
-        // Assert - file exists and is valid camelCase JSON
         Assert.True(File.Exists(AppPaths.ConfigFilePath));
-        var rawJson = File.ReadAllText(AppPaths.ConfigFilePath);
-        using var doc = JsonDocument.Parse(rawJson);
+        using var doc = JsonDocument.Parse(ReadConfigJson());
 
-        // Verify camelCase property names
         Assert.True(doc.RootElement.TryGetProperty("schemaVersion", out _));
         Assert.True(doc.RootElement.TryGetProperty("groups", out _));
         Assert.True(doc.RootElement.TryGetProperty("lastSelectedGroupId", out _));
@@ -527,6 +441,22 @@ public class JsonConfigServiceTests : IDisposable
         return new JsonConfigService(
             new ConfigMigrationService(),
             logger);
+    }
+
+    private static void WriteConfigJson(string json)
+    {
+        EnsureConfigDirectoryExists();
+        File.WriteAllText(AppPaths.ConfigFilePath, json);
+    }
+
+    private static string ReadConfigJson()
+    {
+        return File.ReadAllText(AppPaths.ConfigFilePath);
+    }
+
+    private static void EnsureConfigDirectoryExists()
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(AppPaths.ConfigFilePath)!);
     }
 }
 

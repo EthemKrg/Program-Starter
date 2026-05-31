@@ -12,32 +12,7 @@
         FontFamily="{StaticResource DefaultFontFamily}"
         ShowInTaskbar="False">
 
-    <Window.Resources>
-        <Style x:Key="DialogTitleStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-            <Setter Property="Margin" Value="0,0,0,8" />
-        </Style>
-        <Style x:Key="DialogMessageStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Margin" Value="0,0,0,16" />
-        </Style>
-        <Style x:Key="DialogTextBoxStyle" TargetType="TextBox">
-            <Setter Property="Background" Value="{StaticResource CardBrush}" />
-            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Padding" Value="8,6" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="CaretBrush" Value="{StaticResource TextPrimaryBrush}" />
-            <Setter Property="MinHeight" Value="32" />
-        </Style>
-    </Window.Resources>
-
-    <StackPanel Margin="20">
+    <StackPanel Margin="{StaticResource DialogPadding}">
         <TextBlock Text="{Binding Title, Mode=OneWay}" Style="{StaticResource DialogTitleStyle}" />
         <TextBlock Text="{Binding Message, Mode=OneWay}" Style="{StaticResource DialogMessageStyle}" />
 
@@ -54,7 +29,7 @@
                     Margin="0,0,8,0" />
             <Button x:Name="OkButton"
                     Content="OK"
-                    Style="{StaticResource SecondaryButtonStyle}"
+                    Style="{StaticResource PrimaryButtonStyle}"
                     IsDefault="True"
                     Click="OnOkClick" />
         </StackPanel>

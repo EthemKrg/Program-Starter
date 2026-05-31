@@ -2,25 +2,27 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
-    <!-- Layout dimensions from §18.2 -->
-    <sys:Double x:Key="SidebarWidth">220</sys:Double>
-    <sys:Double x:Key="MainContentPadding">28</sys:Double>
-    <sys:Double x:Key="SectionSpacing">20</sys:Double>
+    <!-- Layout dimensions from UI Style Brief -->
+    <sys:Double x:Key="SidebarWidth">240</sys:Double>
+    <sys:Double x:Key="MainContentPadding">32</sys:Double>
+    <sys:Double x:Key="SectionSpacing">24</sys:Double>
     <sys:Double x:Key="CardPadding">16</sys:Double>
     <sys:Double x:Key="CardVerticalGap">12</sys:Double>
     <sys:Double x:Key="ButtonHeight">36</sys:Double>
     <sys:Double x:Key="SmallButtonHeight">32</sys:Double>
+    <sys:Double x:Key="StatusBarHeight">28</sys:Double>
 
     <!-- Thickness resources -->
-    <Thickness x:Key="MainContentPaddingThickness">28</Thickness>
+    <Thickness x:Key="MainContentPaddingThickness">32</Thickness>
     <Thickness x:Key="CardPaddingThickness">16</Thickness>
     <Thickness x:Key="SidebarItemPadding">12,8</Thickness>
     <Thickness x:Key="ButtonPaddingWide">20,0</Thickness>
     <Thickness x:Key="ButtonPadding">16,0</Thickness>
     <Thickness x:Key="ButtonPaddingSmall">12,0</Thickness>
+    <Thickness x:Key="DialogPadding">24</Thickness>
 
     <!-- Spacing margin resources -->
-    <Thickness x:Key="SectionSpacingBottom">0,0,0,20</Thickness>
+    <Thickness x:Key="SectionSpacingBottom">0,0,0,24</Thickness>
     <Thickness x:Key="CardSpacingBottom">0,0,0,12</Thickness>
 
     <!-- Sidebar separator style -->
