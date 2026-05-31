@@ -8,13 +8,18 @@
     <Color x:Key="Background">#0D1117</Color>
     <Color x:Key="Sidebar">#111827</Color>
     <Color x:Key="Surface">#161B22</Color>
+    <Color x:Key="SurfaceElevated">#1C2530</Color>
     <Color x:Key="Card">#161B22</Color>
     <Color x:Key="CardHover">#1C2433</Color>
+    <Color x:Key="CardBorder">#1E2A35</Color>
+    <Color x:Key="CardBorderHover">#3A4A5C</Color>
     <Color x:Key="SelectedSurface">#1A2744</Color>
     <Color x:Key="Accent">#7C8CFF</Color>
     <Color x:Key="AccentHover">#8E9DFF</Color>
     <Color x:Key="AccentPressed">#6A7AE8</Color>
     <Color x:Key="AccentMuted">#2A3150</Color>
+    <Color x:Key="AccentGlow">#1A2050</Color>
+    <Color x:Key="AccentSurface">#121830</Color>
     <Color x:Key="TextPrimary">#E5E7EB</Color>
     <Color x:Key="TextSecondary">#8B949E</Color>
     <Color x:Key="TextMuted">#6B7280</Color>
@@ -31,13 +36,18 @@
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource Background}" />
     <SolidColorBrush x:Key="SidebarBrush" Color="{StaticResource Sidebar}" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource Surface}" />
+    <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="{StaticResource SurfaceElevated}" />
     <SolidColorBrush x:Key="CardBrush" Color="{StaticResource Card}" />
     <SolidColorBrush x:Key="CardHoverBrush" Color="{StaticResource CardHover}" />
+    <SolidColorBrush x:Key="CardBorderBrush" Color="{StaticResource CardBorder}" />
+    <SolidColorBrush x:Key="CardBorderHoverBrush" Color="{StaticResource CardBorderHover}" />
     <SolidColorBrush x:Key="SelectedSurfaceBrush" Color="{StaticResource SelectedSurface}" />
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}" />
     <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHover}" />
     <SolidColorBrush x:Key="AccentPressedBrush" Color="{StaticResource AccentPressed}" />
     <SolidColorBrush x:Key="AccentMutedBrush" Color="{StaticResource AccentMuted}" />
+    <SolidColorBrush x:Key="AccentGlowBrush" Color="{StaticResource AccentGlow}" />
+    <SolidColorBrush x:Key="AccentSurfaceBrush" Color="{StaticResource AccentSurface}" />
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}" />
     <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />

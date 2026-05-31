@@ -55,10 +55,10 @@
                                 <Storyboard>
                                     <DoubleAnimation Duration="0:0:0.08"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                     To="0.97" />
+                                                     To="0.95" />
                                     <DoubleAnimation Duration="0:0:0.08"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                     To="0.97" />
+                                                     To="0.95" />
                                     <ColorAnimation Duration="0:0:0.08"
                                                     Storyboard.TargetName="border"
                                                     Storyboard.TargetProperty="Background.Color"
@@ -81,6 +81,7 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="border" Property="Background" Value="{StaticResource AccentMutedBrush}" />
                             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter Property="Opacity" Value="0.5" />
                             <Setter Property="RenderTransform">
                                 <Setter.Value>
                                     <ScaleTransform ScaleX="1" ScaleY="1" />
@@ -155,10 +156,10 @@
                                 <Storyboard>
                                     <DoubleAnimation Duration="0:0:0.08"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                     To="0.97" />
+                                                     To="0.95" />
                                     <DoubleAnimation Duration="0:0:0.08"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                     To="0.97" />
+                                                     To="0.95" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -177,6 +178,7 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+                            <Setter Property="Opacity" Value="0.55" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -237,10 +239,10 @@
                                 <Storyboard>
                                     <DoubleAnimation Duration="0:0:0.08"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                     To="0.97" />
+                                                     To="0.95" />
                                     <DoubleAnimation Duration="0:0:0.08"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                     To="0.97" />
+                                                     To="0.95" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -258,6 +260,7 @@
                         </EventTrigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter Property="Opacity" Value="0.5" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -327,10 +330,10 @@
                                 <Storyboard>
                                     <DoubleAnimation Duration="0:0:0.08"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                     To="0.97" />
+                                                     To="0.95" />
                                     <DoubleAnimation Duration="0:0:0.08"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                     To="0.97" />
+                                                     To="0.95" />
                                     <ColorAnimation Duration="0:0:0.08"
                                                     Storyboard.TargetName="border"
                                                     Storyboard.TargetProperty="Background.Color"
@@ -357,6 +360,7 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+                            <Setter Property="Opacity" Value="0.5" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -376,6 +380,12 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="1" ScaleY="1" />
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -383,14 +393,15 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="4">
+                            CornerRadius="4"
+                            RenderTransformOrigin="0.5,0.5">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="MouseEnter">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ColorAnimation Duration="0:0:0.15"
+                                    <ColorAnimation Duration="0:0:0.12"
                                                     Storyboard.TargetName="border"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="{StaticResource CardHover}" />
@@ -400,10 +411,34 @@
                         <EventTrigger RoutedEvent="MouseLeave">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ColorAnimation Duration="0:0:0.2"
+                                    <ColorAnimation Duration="0:0:0.18"
                                                     Storyboard.TargetName="border"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="Transparent" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.08"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                     To="0.90" />
+                                    <DoubleAnimation Duration="0:0:0.08"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                     To="0.90" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.15"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                     To="1" />
+                                    <DoubleAnimation Duration="0:0:0.15"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                     To="1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -411,6 +446,7 @@
                             <Setter TargetName="border" Property="Background" Value="{StaticResource SelectedSurfaceBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
                             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>

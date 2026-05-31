@@ -40,6 +40,7 @@ public class MainViewModel : BaseViewModel
             {
                 OnPropertyChanged(nameof(HasSelectedGroup));
                 OnPropertyChanged(nameof(SelectedGroupAppCount));
+                OnPropertyChanged(nameof(IsSelectedGroupEmpty));
                 PopulateSelectedGroupApps();
                 if (!_isLoading)
                 {
@@ -69,6 +70,8 @@ public class MainViewModel : BaseViewModel
     }
 
     public bool HasSelectedGroup => SelectedGroup is not null;
+
+    public bool IsSelectedGroupEmpty => HasSelectedGroup && SelectedGroupApps.Count == 0;
 
     public bool IsLaunching
     {
@@ -178,6 +181,8 @@ public class MainViewModel : BaseViewModel
         {
             SelectedGroupApps.Add(new AppEntryItemViewModel(app, _pathValidationService));
         }
+
+        OnPropertyChanged(nameof(IsSelectedGroupEmpty));
     }
 
     // ──────────────────────────────────────────────

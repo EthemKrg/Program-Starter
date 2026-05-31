@@ -1,10 +1,10 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- App Card Style with subtle hover lift -->
+    <!-- App Card Style with premium hover lift and border -->
     <Style x:Key="AppCardStyle" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource CardBrush}" />
-        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="10" />
         <Setter Property="Padding" Value="16" />
@@ -18,28 +18,28 @@
             <EventTrigger RoutedEvent="MouseEnter">
                 <BeginStoryboard>
                     <Storyboard>
-                        <ColorAnimation Duration="0:0:0.15"
+                        <ColorAnimation Duration="0:0:0.18"
                                         Storyboard.TargetProperty="Background.Color"
                                         To="{StaticResource CardHover}" />
-                        <ColorAnimation Duration="0:0:0.15"
+                        <ColorAnimation Duration="0:0:0.18"
                                         Storyboard.TargetProperty="BorderBrush.Color"
-                                        To="{StaticResource Border}" />
-                        <DoubleAnimation Duration="0:0:0.15"
+                                        To="{StaticResource CardBorderHover}" />
+                        <DoubleAnimation Duration="0:0:0.18"
                                          Storyboard.TargetProperty="RenderTransform.Y"
-                                         To="-1" />
+                                         To="-2.5" />
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
             <EventTrigger RoutedEvent="MouseLeave">
                 <BeginStoryboard>
                     <Storyboard>
-                        <ColorAnimation Duration="0:0:0.2"
+                        <ColorAnimation Duration="0:0:0.25"
                                         Storyboard.TargetProperty="Background.Color"
                                         To="{StaticResource Card}" />
-                        <ColorAnimation Duration="0:0:0.2"
+                        <ColorAnimation Duration="0:0:0.25"
                                         Storyboard.TargetProperty="BorderBrush.Color"
-                                        To="Transparent" />
-                        <DoubleAnimation Duration="0:0:0.2"
+                                        To="{StaticResource CardBorder}" />
+                        <DoubleAnimation Duration="0:0:0.25"
                                          Storyboard.TargetProperty="RenderTransform.Y"
                                          To="0" />
                     </Storyboard>
@@ -65,25 +65,37 @@
             <EventTrigger RoutedEvent="MouseEnter">
                 <BeginStoryboard>
                     <Storyboard>
-                        <ColorAnimation Duration="0:0:0.15"
+                        <ColorAnimation Duration="0:0:0.18"
                                         Storyboard.TargetProperty="Background.Color"
                                         To="{StaticResource CardHover}" />
+                        <ColorAnimation Duration="0:0:0.18"
+                                        Storyboard.TargetProperty="BorderBrush.Color"
+                                        To="{StaticResource Danger}" />
+                        <DoubleAnimation Duration="0:0:0.18"
+                                         Storyboard.TargetProperty="RenderTransform.Y"
+                                         To="-2.5" />
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
             <EventTrigger RoutedEvent="MouseLeave">
                 <BeginStoryboard>
                     <Storyboard>
-                        <ColorAnimation Duration="0:0:0.2"
+                        <ColorAnimation Duration="0:0:0.25"
                                         Storyboard.TargetProperty="Background.Color"
                                         To="{StaticResource Card}" />
+                        <ColorAnimation Duration="0:0:0.25"
+                                        Storyboard.TargetProperty="BorderBrush.Color"
+                                        To="{StaticResource InvalidBorder}" />
+                        <DoubleAnimation Duration="0:0:0.25"
+                                         Storyboard.TargetProperty="RenderTransform.Y"
+                                         To="0" />
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
         </Style.Triggers>
     </Style>
 
-    <!-- Sidebar Item Style -->
+    <!-- Sidebar Item Style (used for the inner content border of each list item) -->
     <Style x:Key="SidebarItemStyle" TargetType="Border">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="CornerRadius" Value="6" />
