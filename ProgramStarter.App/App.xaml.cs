@@ -18,17 +18,21 @@ public partial class App : Application
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        // Stub service implementations (replaced by real implementations in later phases)
-        services.AddSingleton<IConfigService, StubConfigService>();               // TODO: Replace with JsonConfigService in Phase 1
-        services.AddSingleton<IConfigMigrationService, StubConfigMigrationService>(); // TODO: Replace with ConfigMigrationService in Phase 1
-        services.AddSingleton<IAppLogger, StubAppLogger>();                       // TODO: Replace with FileAppLogger in Phase 1
+        // Phase 1 - Real implementations
+        services.AddSingleton<IConfigMigrationService, ConfigMigrationService>();
+        services.AddSingleton<IAppLogger, FileAppLogger>();
+        services.AddSingleton<IConfigService, JsonConfigService>();
+
+        // Phase 3 stub implementations (replaced by real implementations in Phase 3)
         services.AddSingleton<IFileDialogService, StubFileDialogService>();       // TODO: Replace with FileDialogService in Phase 3
         services.AddSingleton<IPathValidationService, StubPathValidationService>(); // TODO: Replace with PathValidationService in Phase 3
+
+        // Phase 4 stub implementations (replaced by real implementations in Phase 4)
         services.AddSingleton<IProcessStarter, StubProcessStarter>();             // TODO: Replace with ProcessStarter in Phase 4
         services.AddSingleton<IAppLauncherService, StubAppLauncherService>();     // TODO: Replace with AppLauncherService in Phase 4
 
         // ViewModels
-        services.AddTransient<MainViewModel>();
+        services.AddSingleton<MainViewModel>();
 
         // Views
         services.AddTransient<MainWindow>();

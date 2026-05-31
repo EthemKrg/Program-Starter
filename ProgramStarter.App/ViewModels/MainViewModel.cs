@@ -1,10 +1,12 @@
 using System.Collections.ObjectModel;
 using ProgramStarter.App.Models;
+using ProgramStarter.App.Services;
 
 namespace ProgramStarter.App.ViewModels;
 
 public class MainViewModel : BaseViewModel
 {
+    private readonly IAppLogger _logger;
     private AppGroup? _selectedGroup;
     private string _statusMessage = string.Empty;
     private bool _hasGroups;
@@ -44,11 +46,24 @@ public class MainViewModel : BaseViewModel
         set => SetProperty(ref _isLaunching, value);
     }
 
-    public MainViewModel()
+    public MainViewModel(IConfigService configService, IAppLogger logger)
     {
-        // Phase 0: shell state only. No service calls, no CRUD yet.
-        // Groups collection starts empty -> HasGroups = false triggers empty state.
+        _logger = logger;
+        _logger.Info("MainViewModel initializing.");
+
+        var settings = configService.Load();
+
+        // Populate groups from loaded config into the observable collection
+        if (settings.Groups.Count > 0)
+        {
+            foreach (var group in settings.Groups)
+            {
+                Groups.Add(group);
+            }
+        }
+
         UpdateHasGroups();
+        _logger.Info($"MainViewModel initialized with {Groups.Count} group(s).");
     }
 
     public void UpdateHasGroups()
