@@ -25,9 +25,7 @@ Then run the installer and launch Kaldforge from the Start Menu or desktop short
 
 ## Screenshot
 
-```md
 ![Kaldforge Screenshot](docs/screenshots/kaldforge-main.png)
-```
 
 ---
 
