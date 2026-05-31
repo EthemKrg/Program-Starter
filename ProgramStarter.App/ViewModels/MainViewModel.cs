@@ -14,6 +14,7 @@ public class MainViewModel : BaseViewModel
     private readonly IDialogService _dialogService;
     private readonly IFileDialogService _fileDialogService;
     private readonly IPathValidationService _pathValidationService;
+    private IAppLauncherService _appLauncherService = null!;
     private readonly IAppLogger _logger;
 
     private bool _isLoading;
@@ -85,6 +86,10 @@ public class MainViewModel : BaseViewModel
     public ICommand EditAppCommand { get; }
     public ICommand RemoveAppCommand { get; }
 
+    // Launch commands
+    public ICommand LaunchAppCommand { get; }
+    public ICommand LaunchGroupCommand { get; }
+
     public MainViewModel(
         IConfigService configService,
         IDialogService dialogService,
@@ -96,6 +101,7 @@ public class MainViewModel : BaseViewModel
         _dialogService = dialogService;
         _fileDialogService = fileDialogService;
         _pathValidationService = pathValidationService;
+        _appLauncherService = null!; // Will be set via SetAppLauncherService
         _logger = logger;
 
         AddGroupCommand = new RelayCommand(ExecuteAddGroup);
@@ -105,6 +111,9 @@ public class MainViewModel : BaseViewModel
         AddAppCommand = new RelayCommand(ExecuteAddApp, _ => HasSelectedGroup);
         EditAppCommand = new RelayCommand(ExecuteEditApp);
         RemoveAppCommand = new RelayCommand(ExecuteRemoveApp);
+
+        LaunchAppCommand = new AsyncRelayCommand(ExecuteLaunchApp, _ => !IsLaunching);
+        LaunchGroupCommand = new AsyncRelayCommand(ExecuteLaunchGroup, _ => !IsLaunching && HasSelectedGroup);
 
         _isLoading = true;
         _logger.Info("MainViewModel initializing.");
@@ -141,6 +150,17 @@ public class MainViewModel : BaseViewModel
         {
             _isLoading = false;
         }
+    }
+
+    /// <summary>
+    /// Sets the <see cref="IAppLauncherService"/> after construction.
+    /// Required because MainViewModel is a singleton created before AppLauncherService
+    /// can be fully resolved (circular dependency avoidance).
+    /// Must be called exactly once during startup.
+    /// </summary>
+    public void SetAppLauncherService(IAppLauncherService appLauncherService)
+    {
+        _appLauncherService = appLauncherService;
     }
 
     public void UpdateHasGroups()
@@ -390,6 +410,93 @@ public class MainViewModel : BaseViewModel
 
         StatusMessage = $"App \"{appVm.Name}\" removed.";
         _logger.Info($"App removed: {appVm.Name} ({appVm.Id}) from group {SelectedGroup.Name}");
+    }
+
+    // ──────────────────────────────────────────────
+    //  Launch Single App
+    // ──────────────────────────────────────────────
+
+    private async Task ExecuteLaunchApp(object? parameter)
+    {
+        if (parameter is not AppEntryItemViewModel appVm)
+            return;
+
+        IsLaunching = true;
+        try
+        {
+            var result = await _appLauncherService.LaunchOneAsync(appVm.Model);
+
+            if (result.Success)
+            {
+                StatusMessage = result.UserMessage;
+                _logger.Info($"App launched: \"{appVm.Name}\"");
+            }
+            else
+            {
+                StatusMessage = result.UserMessage;
+                _logger.Warning($"Launch failed for \"{appVm.Name}\": {result.UserMessage}");
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to launch \"{appVm.Name}\".";
+            _logger.Error($"Exception during launch of \"{appVm.Name}\": {ex.Message}", ex);
+        }
+        finally
+        {
+            IsLaunching = false;
+        }
+    }
+
+    // ──────────────────────────────────────────────
+    //  Launch Group
+    // ──────────────────────────────────────────────
+
+    private async Task ExecuteLaunchGroup(object? parameter)
+    {
+        if (SelectedGroup is null)
+            return;
+
+        IsLaunching = true;
+        try
+        {
+            var results = await _appLauncherService.LaunchGroupAsync(SelectedGroup, _cachedDelay);
+
+            var successCount = results.Count(r => r.Success);
+            var failCount = results.Count(r => !r.Success);
+
+            if (results.Count == 0)
+            {
+                StatusMessage = "No enabled apps to launch in this group.";
+            }
+            else if (failCount == 0)
+            {
+                StatusMessage = $"Launch requested for {successCount} app(s).";
+            }
+            else if (successCount > 0)
+            {
+                StatusMessage = $"Launch requested for {successCount} app(s). {failCount} failed.";
+            }
+            else
+            {
+                StatusMessage = "Could not launch any apps. Please check the app paths.";
+            }
+
+            // Log individual failures
+            foreach (var result in results.Where(r => !r.Success))
+            {
+                _logger.Warning($"Launch failed for \"{result.AppName}\": {result.UserMessage}");
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = "Failed to launch group.";
+            _logger.Error($"Exception during group launch: {ex.Message}", ex);
+        }
+        finally
+        {
+            IsLaunching = false;
+        }
     }
 
     // ──────────────────────────────────────────────

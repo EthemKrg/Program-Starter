@@ -354,12 +354,14 @@ public class MainViewModelTests : IDisposable
             DefaultDelayMilliseconds = 1000
         };
         var fakeConfig = config ?? new FakeConfigService(settings);
-        return new MainViewModel(
+        var vm = new MainViewModel(
             fakeConfig,
             dialog ?? new FakeDialogService(),
             fileDialog ?? new FakeFileDialogService(),
             pathValidation ?? new FakePathValidationService(),
             logger ?? new FakeLogger());
+        vm.SetAppLauncherService(new FakeAppLauncherService());
+        return vm;
     }
 
     private static MainViewModel CreateViewModelWithEmptyConfig(FakeDialogService? fakeDialog = null)
@@ -371,12 +373,14 @@ public class MainViewModelTests : IDisposable
             DefaultDelayMilliseconds = 1000
         };
         var fakeConfig = new FakeConfigService(settings);
-        return new MainViewModel(
+        var vm = new MainViewModel(
             fakeConfig,
             fakeDialog ?? new FakeDialogService(),
             new FakeFileDialogService(),
             new FakePathValidationService(),
             new FakeLogger());
+        vm.SetAppLauncherService(new FakeAppLauncherService());
+        return vm;
     }
 }
 
@@ -474,4 +478,31 @@ internal class FakeLogger : IAppLogger
     public void Info(string message) => InfoMessages.Add(message);
     public void Warning(string message) => WarningMessages.Add(message);
     public void Error(string message, Exception? exception = null) => ErrorMessages.Add((message, exception));
+}
+
+/// <summary>
+/// Fake <see cref="IAppLauncherService"/> for testing MainViewModel launch behavior.
+/// </summary>
+internal class FakeAppLauncherService : IAppLauncherService
+{
+    /// <summary>
+    /// The result to return from <see cref="LaunchOneAsync"/>.
+    /// </summary>
+    public LaunchResult LaunchOneResult { get; set; } = new LaunchResult
+    {
+        Success = true,
+        AppName = "TestApp",
+        UserMessage = "\"TestApp\" launched."
+    };
+
+    /// <summary>
+    /// The results to return from <see cref="LaunchGroupAsync"/>.
+    /// </summary>
+    public List<LaunchResult> LaunchGroupResults { get; set; } = new();
+
+    public Task<LaunchResult> LaunchOneAsync(AppEntry app)
+        => Task.FromResult(LaunchOneResult);
+
+    public Task<List<LaunchResult>> LaunchGroupAsync(AppGroup group, int delayMilliseconds)
+        => Task.FromResult(LaunchGroupResults);
 }

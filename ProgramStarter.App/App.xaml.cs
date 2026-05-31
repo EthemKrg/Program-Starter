@@ -34,9 +34,9 @@ public partial class App : Application
         services.AddSingleton<IFileDialogService, FileDialogService>();
         services.AddSingleton<IPathValidationService, PathValidationService>();
 
-        // Phase 4 stub implementations (replaced by real implementations in Phase 4)
-        services.AddSingleton<IProcessStarter, StubProcessStarter>();             // TODO: Replace with ProcessStarter in Phase 4
-        services.AddSingleton<IAppLauncherService, StubAppLauncherService>();     // TODO: Replace with AppLauncherService in Phase 4
+        // Phase 4 - Real implementations
+        services.AddSingleton<IProcessStarter, ProcessStarter>();
+        services.AddSingleton<IAppLauncherService, AppLauncherService>();
 
         // ViewModels
         services.AddSingleton<MainViewModel>();
@@ -58,6 +58,11 @@ public partial class App : Application
 
         // Explicitly register the real MainWindow for dialog ownership
         Application.Current.MainWindow = mainWindow;
+
+        // Wire up AppLauncherService to MainViewModel (singleton, already resolved by MainWindow)
+        var viewModel = _serviceProvider.GetRequiredService<MainViewModel>();
+        var appLauncherService = _serviceProvider.GetRequiredService<IAppLauncherService>();
+        viewModel.SetAppLauncherService(appLauncherService);
 
         mainWindow.Show();
 

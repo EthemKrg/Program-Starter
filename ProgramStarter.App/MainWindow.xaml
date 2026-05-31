@@ -138,6 +138,24 @@
                     <!-- Actions -->
                     <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                                 Orientation="Horizontal">
+                        <Button Content="Start"
+                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.LaunchAppCommand}"
+                                CommandParameter="{Binding}"
+                                Margin="0,0,8,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.IsLaunching}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsPathValid}" Value="False">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <Button Content="Edit"
                                 Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.EditAppCommand}"
                                 CommandParameter="{Binding}"
@@ -280,11 +298,12 @@
             <StackPanel Grid.Row="0"
                         Visibility="{Binding HasGroups, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
 
-                <!-- When a group is selected: show group name, app count, and Add App button -->
+                <!-- When a group is selected: show group name, app count, Add App, and Start Group buttons -->
                 <StackPanel Visibility="{Binding HasSelectedGroup, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
@@ -299,6 +318,26 @@
                         </StackPanel>
 
                         <Button Grid.Column="1"
+                                Content="Start Group"
+                                Command="{Binding LaunchGroupCommand}"
+                                VerticalAlignment="Top"
+                                Margin="0,0,8,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsLaunching}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding HasSelectedGroup}" Value="False">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Grid.Column="2"
                                 Content="+ Add App"
                                 Command="{Binding AddAppCommand}"
                                 Style="{StaticResource SecondaryButtonStyle}"
