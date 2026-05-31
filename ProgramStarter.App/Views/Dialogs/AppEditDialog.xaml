@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Name="DialogRoot"
         Title="Edit App"
-        MinWidth="480" MaxWidth="560"
+        MinWidth="580" MaxWidth="580"
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
@@ -12,20 +12,51 @@
         FontFamily="{StaticResource DefaultFontFamily}"
         ShowInTaskbar="False">
 
-    <StackPanel Margin="{StaticResource DialogPadding}">
-        <TextBlock Text="Edit App" Style="{StaticResource DialogTitleStyle}" />
+    <StackPanel Margin="32">
+        <!-- Top header row: icon tile + title + subtitle -->
+        <Grid Margin="0,0,0,22">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0"
+                    Width="48" Height="48"
+                    CornerRadius="15"
+                    Background="{StaticResource AccentSurfaceBrush}"
+                    BorderBrush="{StaticResource AccentMutedBrush}"
+                    BorderThickness="1"
+                    Margin="0,0,14,0"
+                    VerticalAlignment="Center">
+                <Image Source="/Assets/Kaldforge/kaldforge_icon_launch_tile.png"
+                       Width="36" Height="36"
+                       Stretch="Uniform"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock Text="Edit App"
+                           FontSize="22"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextPrimaryBrush}" />
+                <TextBlock Text="Update launcher name and executable path."
+                           FontSize="12"
+                           Foreground="{StaticResource TextMutedBrush}" />
+            </StackPanel>
+        </Grid>
 
-        <!-- Name -->
-        <TextBlock Text="Name" Style="{StaticResource DialogFieldLabelStyle}" />
+        <!-- Name field -->
+        <TextBlock Text="Name"
+                   Style="{StaticResource DialogFieldLabelStyle}" />
         <TextBox x:Name="NameTextBox"
                  Text="{Binding AppName, UpdateSourceTrigger=PropertyChanged}"
                  Style="{StaticResource DialogTextBoxStyle}"
-                 Margin="0,0,0,4"
+                 Margin="0,0,0,22"
                  KeyDown="OnNameKeyDown" />
 
-        <!-- Path -->
-        <TextBlock Text="Path" Style="{StaticResource DialogFieldLabelStyle}" Margin="0,12,0,4" />
-        <Grid Margin="0,0,0,4">
+        <!-- Path field -->
+        <TextBlock Text="Path"
+                   Style="{StaticResource DialogFieldLabelStyle}" />
+        <Grid Margin="0,0,0,28">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -36,25 +67,36 @@
                      Style="{StaticResource DialogTextBoxStyle}"
                      IsReadOnly="False"
                      KeyDown="OnPathKeyDown" />
-            <Button Grid.Column="1"
-                    Content="Browse"
-                    Style="{StaticResource NeutralButtonStyle}"
-                    Margin="8,0,0,0"
-                    Height="34"
-                    Padding="12,0"
-                    Click="OnBrowseClick" />
+             <Button Grid.Column="1"
+                     Style="{StaticResource NeutralButtonStyle}"
+                     Margin="12,0,0,0"
+                     Height="46"
+                     MinWidth="118"
+                     Padding="18,0"
+                     FontSize="14"
+                     Click="OnBrowseClick">
+                 <StackPanel Orientation="Horizontal">
+                     <Image Source="/Assets/Kaldforge/kaldforge_icon_browse_folder.png"
+                            Width="18" Height="18"
+                            Stretch="Uniform"
+                            VerticalAlignment="Center"
+                            Margin="0,0,8,0" />
+                     <TextBlock Text="Browse" VerticalAlignment="Center" />
+                 </StackPanel>
+             </Button>
         </Grid>
 
-        <!-- Buttons -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+        <!-- Bottom actions: Cancel + Save Changes, right-aligned, gap 12 -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Cancel"
-                    Style="{StaticResource NeutralButtonStyle}"
+                    Style="{StaticResource DialogNeutralButtonStyle}"
                     IsCancel="True"
-                    Margin="0,0,8,0" />
+                    Margin="0,0,12,0" />
             <Button x:Name="OkButton"
-                    Content="OK"
-                    Style="{StaticResource PrimaryButtonStyle}"
+                    Content="Save Changes"
+                    Style="{StaticResource DialogPrimaryButtonStyle}"
                     IsDefault="True"
+                    MinWidth="148"
                     Click="OnOkClick" />
         </StackPanel>
     </StackPanel>

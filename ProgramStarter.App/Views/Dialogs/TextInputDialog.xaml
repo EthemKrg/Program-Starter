@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Name="DialogRoot"
         Title="{Binding Title, Mode=OneWay}"
-        MinWidth="400" MaxWidth="500"
+        MinWidth="420"
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
@@ -12,25 +12,33 @@
         FontFamily="{StaticResource DefaultFontFamily}"
         ShowInTaskbar="False">
 
-    <StackPanel Margin="{StaticResource DialogPadding}">
-        <TextBlock Text="{Binding Title, Mode=OneWay}" Style="{StaticResource DialogTitleStyle}" />
-        <TextBlock Text="{Binding Message, Mode=OneWay}" Style="{StaticResource DialogMessageStyle}" />
+    <StackPanel Margin="32">
+        <!-- Premium dialog title: 22px SemiBold -->
+        <TextBlock Text="{Binding Title, Mode=OneWay}"
+                   Style="{StaticResource DialogTitleStyle}" />
 
+        <!-- Message -->
+        <TextBlock Text="{Binding Message, Mode=OneWay}"
+                   Style="{StaticResource DialogMessageStyle}" />
+
+        <!-- Premium textbox -->
         <TextBox x:Name="InputTextBox"
                  Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
                  Style="{StaticResource DialogTextBoxStyle}"
-                 Margin="0,0,0,20"
+                 Margin="0,0,0,28"
                  KeyDown="OnInputKeyDown" />
 
+        <!-- Bottom actions: Cancel + OK -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Cancel"
-                    Style="{StaticResource NeutralButtonStyle}"
+                    Style="{StaticResource DialogNeutralButtonStyle}"
                     IsCancel="True"
-                    Margin="0,0,8,0" />
+                    Margin="0,0,12,0" />
             <Button x:Name="OkButton"
                     Content="OK"
-                    Style="{StaticResource PrimaryButtonStyle}"
+                    Style="{StaticResource DialogPrimaryButtonStyle}"
                     IsDefault="True"
+                    MinWidth="118"
                     Click="OnOkClick" />
         </StackPanel>
     </StackPanel>

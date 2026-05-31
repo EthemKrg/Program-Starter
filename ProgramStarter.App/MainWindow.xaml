@@ -2,24 +2,35 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:ProgramStarter.App.ViewModels"
-        Title="Program Starter"
-        MinWidth="900" MinHeight="560"
-        Width="960" Height="640"
+        Title="Kaldforge"
+        MinWidth="920" MinHeight="620"
+        Width="1080" Height="720"
         Background="{StaticResource BackgroundBrush}"
         FontFamily="{StaticResource DefaultFontFamily}"
         WindowStartupLocation="CenterScreen"
         TextOptions.TextFormattingMode="Display"
-        SnapsToDevicePixels="True">
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
 
-        <!-- Inverted BooleanToVisibilityConverter via style trigger -->
-        <Style x:Key="VisibleWhenFalse" TargetType="FrameworkElement">
+        <!-- Inverted visibility: visible when HasGroups is false -->
+        <Style x:Key="VisibleWhenNoGroups" TargetType="FrameworkElement">
             <Setter Property="Visibility" Value="Visible" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding HasGroups, Mode=OneWay}" Value="True">
                     <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Visible when HasSelectedGroup is true -->
+        <Style x:Key="VisibleWhenSelected" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasSelectedGroup, Mode=OneWay}" Value="True">
+                    <Setter Property="Visibility" Value="Visible" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -34,7 +45,7 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Empty group state: collapsed when no group selected or group has apps -->
+        <!-- Empty group state: visible only when selected group has no apps -->
         <Style x:Key="EmptyGroupStateVisibility" TargetType="FrameworkElement">
             <Setter Property="Visibility" Value="Visible" />
             <Style.Triggers>
@@ -44,155 +55,144 @@
             </Style.Triggers>
         </Style>
 
-        <!-- No-Groups Empty State with premium illustration holder slot -->
+        <!-- ── No-Groups Empty State ── -->
         <DataTemplate x:Key="NoGroupsEmptyState">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Margin="0,32,0,0">
-
-                <!-- Holder: premium empty state illustration area (reserved for Kaldforge asset) -->
-                <Border x:Name="EmptyStateIllusSlot"
-                        Width="100" Height="76"
-                        CornerRadius="12"
-                        Background="{StaticResource AccentSurfaceBrush}"
-                        BorderBrush="{StaticResource AccentMutedBrush}"
-                        BorderThickness="1"
-                        Margin="0,0,0,24"
-                        HorizontalAlignment="Center"
-                        RenderTransformOrigin="0.5,0.5">
-                    <TextBlock Text="◇"
-                               FontSize="30"
-                               Foreground="{StaticResource AccentBrush}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Opacity="0.6" />
-                </Border>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!-- Asset: kaldforge_empty_slots_add.png — width 240, centered, preserve aspect ratio -->
+                <Image Source="/Assets/Kaldforge/kaldforge_empty_slots_add.png"
+                       Width="240"
+                       Stretch="Uniform"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Margin="0,0,0,36" />
 
                 <TextBlock Text="No groups yet"
                            Style="{StaticResource EmptyStateTitleStyle}"
                            Margin="0,0,0,8" />
                 <TextBlock Text="Create your first launch group and start organizing your apps."
                            Style="{StaticResource EmptyStateTextStyle}"
-                           Margin="0,0,0,24" />
-                <Button Content="+ Add Group"
-                        Command="{Binding AddGroupCommand}"
+                           Margin="0,0,0,28"
+                           MaxWidth="380" />
+                <Button Command="{Binding AddGroupCommand}"
                         Style="{StaticResource SecondaryButtonStyle}"
-                        HorizontalAlignment="Center" />
+                        Height="46"
+                        MinWidth="150"
+                        HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/Kaldforge/kaldforge_icon_add_grid.png"
+                               Width="20" Height="20"
+                               Stretch="Uniform"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,0" />
+                        <TextBlock Text="+ Add Group" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </DataTemplate>
 
-        <!-- Empty Group DataTemplate with premium illustration holder slot -->
+        <!-- ── Empty Group DataTemplate ── -->
         <DataTemplate x:Key="EmptyGroupState">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Margin="0,32,0,0">
-
-                <!-- Holder: premium empty state illustration area (reserved for Kaldforge asset) -->
-                <Border x:Name="EmptyStateIllusSlot"
-                        Width="100" Height="76"
-                        CornerRadius="12"
-                        Background="{StaticResource AccentSurfaceBrush}"
-                        BorderBrush="{StaticResource AccentMutedBrush}"
-                        BorderThickness="1"
-                        Margin="0,0,0,24"
-                        HorizontalAlignment="Center"
-                        RenderTransformOrigin="0.5,0.5">
-                    <TextBlock Text="◇"
-                               FontSize="30"
-                               Foreground="{StaticResource AccentBrush}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Opacity="0.6" />
-                </Border>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!-- Asset: kaldforge_empty_slots.png — width 240, centered, preserve aspect ratio -->
+                <Image Source="/Assets/Kaldforge/kaldforge_empty_slots.png"
+                       Width="240"
+                       Stretch="Uniform"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Margin="0,0,0,36" />
 
                 <TextBlock Text="No apps in this group yet"
                            Style="{StaticResource EmptyStateTitleStyle}"
                            Margin="0,0,0,8" />
-                <TextBlock Text="Add your first app to start building this launch group."
+                <TextBlock Text="Add your first app to build this launch group."
                            Style="{StaticResource EmptyStateTextStyle}"
-                           Margin="0,0,0,24" />
-                <Button Content="+ Add App"
-                        Command="{Binding AddAppCommand}"
+                           Margin="0,0,0,28"
+                           MaxWidth="380" />
+                <Button Command="{Binding AddAppCommand}"
                         Style="{StaticResource SecondaryButtonStyle}"
-                        HorizontalAlignment="Center" />
+                        Height="46"
+                        MinWidth="134"
+                        HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/Kaldforge/kaldforge_icon_add_folder.png"
+                               Width="20" Height="20"
+                               Stretch="Uniform"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,0" />
+                        <TextBlock Text="Add App" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </DataTemplate>
 
-        <!-- App Card Template -->
+        <!-- ── App Card Template ── -->
         <DataTemplate x:Key="AppCardTemplate" DataType="vm:AppEntryItemViewModel">
             <Border x:Name="AppCardBorder"
-                    Margin="0,0,0,10"
+                    Margin="0,0,0,14"
                     Style="{StaticResource AppCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="36" />
+                        <ColumnDefinition Width="92" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
 
-                    <!-- Holder: premium app card icon area (reserved for Kaldforge asset) -->
-                    <Border Grid.Row="0" Grid.RowSpan="2"
-                            Grid.Column="0"
-                            x:Name="AppCardIconSlot"
-                            Width="28" Height="28"
-                            CornerRadius="7"
-                            Background="{StaticResource SurfaceElevatedBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1"
-                            Margin="2,2,10,0"
-                            VerticalAlignment="Top"
-                            RenderTransformOrigin="0.5,0.5">
-                        <TextBlock Text="◇"
-                                   FontSize="14"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                    <!-- App Icon Tile: 72x72, radius 18, image 52x52 -->
+                    <Border Grid.Column="0"
+                            Style="{StaticResource AppIconTileStyle}">
+                        <Image Source="/Assets/Kaldforge/kaldforge_icon_launch_tile.png"
+                               Width="52" Height="52"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
                     </Border>
 
-                    <!-- App name -->
-                    <TextBlock Grid.Row="0" Grid.Column="1"
-                               Text="{Binding Name, Mode=OneWay}"
-                               Style="{StaticResource CardTitleStyle}"
-                               TextTrimming="CharacterEllipsis" />
+                    <!-- App info column -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,20,0">
+                        <!-- App name — 18px SemiBold -->
+                        <TextBlock Text="{Binding Name, Mode=OneWay}"
+                                   Style="{StaticResource CardTitleStyle}"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,0,0,4" />
 
-                    <!-- Invalid path text (visible when path is invalid) -->
-                    <TextBlock Grid.Row="0" Grid.Column="1"
-                               Text="Path not found — edit to fix"
-                               Foreground="{StaticResource WarningBrush}"
-                               VerticalAlignment="Center">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource MutedTextStyle}">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsPathValid, Mode=OneWay}" Value="False">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
+                        <!-- App path — 13px muted, one line ellipsis -->
+                        <TextBlock Text="{Binding Path, Mode=OneWay}"
+                                   Style="{StaticResource PathTextStyle}" />
 
-                    <!-- App path -->
-                    <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                               Text="{Binding Path, Mode=OneWay}"
-                               Style="{StaticResource PathTextStyle}"
-                               Margin="0,2,0,10" />
+                        <!-- Invalid path warning — icon + text below path -->
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,4,0,0"
+                                    Visibility="Collapsed">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPathValid, Mode=OneWay}" Value="False">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <Image Source="/Assets/Kaldforge/kaldforge_icon_warning.png"
+                                   Width="18" Height="18"
+                                   Stretch="Uniform"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,0" />
+                            <TextBlock Text="Path not found - edit to fix"
+                                       Style="{StaticResource InvalidPathStyle}" />
+                        </StackPanel>
+                    </StackPanel>
 
-                    <!-- Actions -->
-                    <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-                                Orientation="Horizontal">
+                    <!-- Actions: horizontal row, right aligned, vertically centered, gap 10 -->
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center">
                         <Button Content="Start"
                                 Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.LaunchAppCommand}"
                                 CommandParameter="{Binding}"
-                                Margin="0,0,8,0">
+                                Margin="0,0,10,0"
+                                MinWidth="92">
                             <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
-                                    <Setter Property="Height" Value="30" />
-                                    <Setter Property="Padding" Value="14,0" />
-                                    <Setter Property="FontSize" Value="12" />
+                                <Style TargetType="Button" BasedOn="{StaticResource CompactPrimaryButtonStyle}">
                                     <Setter Property="IsEnabled" Value="True" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.IsLaunching}" Value="True">
@@ -205,15 +205,31 @@
                                 </Style>
                             </Button.Style>
                         </Button>
-                        <Button Content="Edit"
-                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.EditAppCommand}"
+                        <Button Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.EditAppCommand}"
                                 CommandParameter="{Binding}"
                                 Style="{StaticResource NeutralButtonStyle}"
-                                Margin="0,0,8,0" />
-                        <Button Content="Remove"
-                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RemoveAppCommand}"
+                                Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Assets/Kaldforge/kaldforge_icon_edit_pencil.png"
+                                       Width="18" Height="18"
+                                       Stretch="Uniform"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0" />
+                                <TextBlock Text="Edit" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RemoveAppCommand}"
                                 CommandParameter="{Binding}"
-                                Style="{StaticResource DangerButtonStyle}" />
+                                Style="{StaticResource DangerButtonStyle}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Assets/Kaldforge/kaldforge_icon_delete_bin.png"
+                                       Width="18" Height="18"
+                                       Stretch="Uniform"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0" />
+                                <TextBlock Text="Remove" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -222,13 +238,13 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="240" />
+            <ColumnDefinition Width="280" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <!-- ═══════════════ Sidebar ═══════════════ -->
         <Border Grid.Column="0" Background="{StaticResource SidebarBrush}">
-            <Grid Margin="0,24,0,0">
+            <Grid Margin="18,24,18,18">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -237,53 +253,51 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <!-- Sidebar Header with premium emblem holder slot -->
-                <Grid Grid.Row="0" Margin="16,0,16,12">
+                <!-- Sidebar Brand Header — Height 76 -->
+                <Grid Grid.Row="0" Height="76">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Premium emblem holder with subtle glow backdrop -->
-                    <Grid Grid.Column="0" Width="32" Height="32" Margin="0,0,12,0">
-                        <!-- Glow backdrop -->
-                        <Border Width="32" Height="32"
-                                CornerRadius="8"
-                                Background="{StaticResource AccentGlowBrush}"
-                                Opacity="0.5" />
-                        <!-- Emblem slot (reserved for Kaldforge asset) -->
-                        <Border x:Name="SidebarEmblemSlot"
-                                Width="28" Height="28"
-                                CornerRadius="6"
-                                Background="{StaticResource AccentSurfaceBrush}"
-                                BorderBrush="{StaticResource AccentMutedBrush}"
-                                BorderThickness="1"
-                                ToolTip="Program Starter"
-                                RenderTransformOrigin="0.5,0.5"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center">
-                            <TextBlock Text="PS"
-                                       FontSize="10"
-                                       FontWeight="Bold"
-                                       Foreground="{StaticResource AccentBrush}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />
-                        </Border>
-                    </Grid>
-
-                    <TextBlock Grid.Column="1"
-                               Text="Program Starter"
-                               FontSize="15"
-                               FontWeight="SemiBold"
-                               Foreground="{StaticResource TextPrimaryBrush}"
+                    <!-- Kaldforge emblem tile: 56x56, radius 15, border 1 -->
+                    <Border Grid.Column="0"
+                            Width="56" Height="56"
+                            CornerRadius="15"
+                            Background="{StaticResource AccentSurfaceBrush}"
+                            BorderBrush="{StaticResource AccentMutedBrush}"
+                            BorderThickness="1"
+                            Margin="0,0,14,0"
+                            ToolTip="Kaldforge">
+                        <Image Source="/Assets/Kaldforge/kaldforge_icon_launch_tile.png"
+                               Width="42" Height="42"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Center"
                                VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Kaldforge"
+                                   Style="{StaticResource BrandTitleStyle}" />
+                        <TextBlock Text="Program Starter"
+                                   Style="{StaticResource BrandSubtitleStyle}"
+                                   Margin="0,2,0,0" />
+                    </StackPanel>
                 </Grid>
 
-                <!-- Sidebar subtitle -->
-                <TextBlock Grid.Row="1"
-                           Text="Launch groups"
-                           Style="{StaticResource MutedTextStyle}"
-                           Margin="16,0,16,12" />
+                <!-- Sidebar divider: simple 1px line -->
+                <Rectangle Grid.Row="1"
+                           Height="1"
+                           Fill="{StaticResource BorderBrush}"
+                           Opacity="0.55"
+                           Margin="0,18,0,16"
+                           HorizontalAlignment="Stretch" />
+
+                <!-- Section label -->
+                <TextBlock Grid.Row="2"
+                           Text="LAUNCH GROUPS"
+                           Style="{StaticResource SidebarSectionLabelStyle}"
+                           Margin="0,0,0,12" />
 
                 <!-- Group List -->
                 <ListBox Grid.Row="3"
@@ -291,7 +305,6 @@
                          SelectedItem="{Binding SelectedGroup}"
                          Background="Transparent"
                          BorderThickness="0"
-                         Margin="8,0,8,0"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -304,43 +317,48 @@
 
                                     <TextBlock Grid.Column="0"
                                                Text="{Binding Name}"
-                                               FontSize="14"
-                                               FontWeight="Normal"
-                                               Foreground="{StaticResource TextPrimaryBrush}"
-                                               TextTrimming="CharacterEllipsis"
-                                               VerticalAlignment="Center" />
+                                               Style="{StaticResource SidebarGroupNameStyle}" />
 
-                                    <!-- Rename/Delete actions with opacity transition -->
-                                    <StackPanel Grid.Column="1"
-                                                Orientation="Horizontal"
-                                                Margin="4,0,0,0"
-                                                Opacity="0"
-                                                RenderTransformOrigin="0.5,0.5">
-                                        <StackPanel.Style>
-                                            <Style TargetType="StackPanel">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Path=IsMouseOver}"
-                                                                 Value="True">
-                                                        <Setter Property="Opacity" Value="0.85" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </StackPanel.Style>
-                                        <Button Content="✏"
-                                                ToolTip="Rename"
-                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RenameGroupCommand}"
-                                                CommandParameter="{Binding}"
-                                                Style="{StaticResource GhostButtonStyle}"
-                                                FontSize="11" />
-                                        <Button Content="✕"
-                                                ToolTip="Delete"
-                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.DeleteGroupCommand}"
-                                                CommandParameter="{Binding}"
-                                                Style="{StaticResource GhostButtonStyle}"
-                                                Margin="2,0,0,0"
-                                                FontSize="11"
-                                                Foreground="{StaticResource DangerBrush}" />
-                                    </StackPanel>
+                                    <!-- Action buttons: always reserve space, opacity 0 default, 1 on hover -->
+                                    <Border Grid.Column="1"
+                                            Width="72"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Background="Transparent">
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Right"
+                                                    Opacity="0"
+                                                    IsHitTestVisible="False">
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Path=IsMouseOver}"
+                                                                     Value="True">
+                                                            <Setter Property="Opacity" Value="1" />
+                                                            <Setter Property="IsHitTestVisible" Value="True" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </StackPanel.Style>
+                                            <Button ToolTip="Rename"
+                                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RenameGroupCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{StaticResource SidebarActionButtonStyle}"
+                                                    Margin="0,0,6,0">
+                                                <Image Source="/Assets/Kaldforge/kaldforge_icon_edit_pencil.png"
+                                                       Width="18" Height="18"
+                                                       Stretch="Uniform" />
+                                            </Button>
+                                            <Button ToolTip="Delete"
+                                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.DeleteGroupCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{StaticResource SidebarActionButtonStyle}">
+                                                <Image Source="/Assets/Kaldforge/kaldforge_icon_delete_bin.png"
+                                                       Width="18" Height="18"
+                                                       Stretch="Uniform" />
+                                            </Button>
+                                        </StackPanel>
+                                    </Border>
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -351,48 +369,52 @@
                             <Setter Property="BorderThickness" Value="0" />
                             <Setter Property="Margin" Value="0,2" />
                             <Setter Property="Padding" Value="0" />
+                            <Setter Property="Height" Value="62" />
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
                                         <Border x:Name="ItemBorder"
                                                 Background="{TemplateBinding Background}"
-                                                CornerRadius="6"
-                                                Padding="10,8">
+                                                CornerRadius="12"
+                                                Padding="12,10">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="3" />
+                                                    <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
 
-                                                <!-- Accent indicator (visible when selected) -->
+                                                <!-- Left accent bar: simple 4x38 Rectangle -->
                                                 <Rectangle Grid.Column="0"
                                                            x:Name="AccentBar"
-                                                           Width="3"
+                                                           Width="4"
+                                                           Height="38"
+                                                           RadiusX="2"
+                                                           RadiusY="2"
                                                            Fill="{StaticResource AccentBrush}"
-                                                           RadiusX="1.5" RadiusY="1.5"
-                                                           VerticalAlignment="Stretch"
+                                                           VerticalAlignment="Center"
                                                            HorizontalAlignment="Left"
-                                                           Opacity="0" />
+                                                           Opacity="0"
+                                                           Margin="0,0,10,0" />
 
                                                 <!-- Content -->
-                                                <ContentPresenter Grid.Column="1" Margin="8,0,0,0" />
+                                                <ContentPresenter Grid.Column="1" />
                                             </Grid>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <EventTrigger RoutedEvent="MouseEnter">
                                                 <BeginStoryboard>
                                                     <Storyboard>
-                                                        <ColorAnimation Duration="0:0:0.12"
+                                                        <ColorAnimation Duration="0:0:0.13"
                                                                         Storyboard.TargetName="ItemBorder"
                                                                         Storyboard.TargetProperty="Background.Color"
-                                                                        To="{StaticResource CardHover}" />
+                                                                        To="{StaticResource SidebarHover}" />
                                                     </Storyboard>
                                                 </BeginStoryboard>
                                             </EventTrigger>
                                             <EventTrigger RoutedEvent="MouseLeave">
                                                 <BeginStoryboard>
                                                     <Storyboard>
-                                                        <ColorAnimation Duration="0:0:0.18"
+                                                        <ColorAnimation Duration="0:0:0.15"
                                                                         Storyboard.TargetName="ItemBorder"
                                                                         Storyboard.TargetProperty="Background.Color"
                                                                         To="Transparent" />
@@ -400,7 +422,7 @@
                                                 </BeginStoryboard>
                                             </EventTrigger>
                                             <Trigger Property="IsSelected" Value="True">
-                                                <Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource SelectedSurfaceBrush}" />
+                                                <Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource SidebarSelectedBrush}" />
                                                 <Setter TargetName="AccentBar" Property="Opacity" Value="1" />
                                             </Trigger>
                                         </ControlTemplate.Triggers>
@@ -411,86 +433,119 @@
                     </ListBox.ItemContainerStyle>
                 </ListBox>
 
-                <!-- Add Group Button -->
+                <!-- Add Group button -->
                 <Button Grid.Row="4"
-                        Content="+ Add Group"
                         Command="{Binding AddGroupCommand}"
-                        Style="{StaticResource SecondaryButtonStyle}"
-                        Height="34"
-                        FontSize="12"
-                        Margin="8,8,8,16" />
+                        Style="{StaticResource SidebarAddGroupButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/Kaldforge/kaldforge_icon_add_grid.png"
+                               Width="20" Height="20"
+                               Stretch="Uniform"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,0" />
+                        <TextBlock Text="+ Add Group" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
             </Grid>
         </Border>
 
         <!-- ═══════════════ Main Content Area ═══════════════ -->
-        <Grid Grid.Column="1" Margin="{StaticResource MainContentPaddingThickness}">
+        <Grid Grid.Column="1" Margin="40,36,40,28">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <!-- No-Groups Empty State (visible when HasGroups is false) -->
+            <!-- No-Groups Empty State -->
             <ContentControl Grid.Row="0" Grid.RowSpan="3"
                             Content="{Binding}"
                             ContentTemplate="{StaticResource NoGroupsEmptyState}"
-                            Style="{StaticResource VisibleWhenFalse}" />
+                            Style="{StaticResource VisibleWhenNoGroups}" />
 
             <!-- Content shown when groups exist -->
             <StackPanel Grid.Row="0"
                         Visibility="{Binding HasGroups, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
 
-                <!-- When a group is selected: show group name, app count, and action buttons -->
-                <StackPanel Visibility="{Binding HasSelectedGroup, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
-                    <Grid>
+                <!-- Header when a group is selected -->
+                <StackPanel Style="{StaticResource VisibleWhenSelected}">
+                    <Grid Height="84">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0">
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
                             <TextBlock Text="{Binding SelectedGroup.Name, Mode=OneWay, FallbackValue='Select a group'}"
-                                       Style="{StaticResource MainTitleStyle}" />
+                                       FontSize="28"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
                             <TextBlock Margin="0,4,0,0"
-                                       Style="{StaticResource SecondaryTextStyle}">
+                                       FontSize="13"
+                                       Foreground="{StaticResource TextMutedBrush}">
                                 <Run Text="{Binding SelectedGroupAppCount, Mode=OneWay}" />
-                                <Run Text=" apps in this group" />
+                                <Run Text=" app in this group" />
                             </TextBlock>
                         </StackPanel>
 
-                        <Button Grid.Column="1"
-                                Content="Start Group"
-                                Command="{Binding LaunchGroupCommand}"
-                                VerticalAlignment="Top"
-                                Margin="0,0,8,0">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
-                                    <Setter Property="IsEnabled" Value="True" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsLaunching, Mode=OneWay}" Value="True">
-                                            <Setter Property="IsEnabled" Value="False" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding HasSelectedGroup, Mode=OneWay}" Value="False">
-                                            <Setter Property="IsEnabled" Value="False" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-
-                        <Button Grid.Column="2"
-                                Content="+ Add App"
-                                Command="{Binding AddAppCommand}"
-                                Style="{StaticResource SecondaryButtonStyle}"
-                                VerticalAlignment="Top" />
+                        <!-- Header action buttons -->
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center"
+                                    Margin="0,0,12,0">
+                            <Button Content="▶ Start Group"
+                                    Command="{Binding LaunchGroupCommand}"
+                                    Margin="0,0,12,0">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                                        <Setter Property="IsEnabled" Value="True" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsLaunching, Mode=OneWay}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding HasSelectedGroup, Mode=OneWay}" Value="False">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Command="{Binding AddAppCommand}"
+                                    Style="{StaticResource SecondaryButtonStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/Assets/Kaldforge/kaldforge_icon_add_folder.png"
+                                           Width="20" Height="20"
+                                           Stretch="Uniform"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,10,0" />
+                                    <TextBlock Text="Add App" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
                     </Grid>
+
+                    <!-- Header divider: full width 1px line -->
+                    <Rectangle Height="1"
+                               Fill="{StaticResource BorderBrush}"
+                               Opacity="0.55"
+                               Margin="0,18,0,24"
+                               HorizontalAlignment="Stretch" />
+
+                    <!-- Amber divider asset directly under the line -->
+                    <Image Source="/Assets/Kaldforge/kaldforge_divider_crystal_amber.png"
+                           Width="260"
+                           Height="8"
+                           Stretch="UniformToFill"
+                           Opacity="0.45"
+                           Margin="0,-28,0,0"
+                           HorizontalAlignment="Left" />
                 </StackPanel>
 
                 <!-- When groups exist but none is selected -->
                 <Border Style="{StaticResource HiddenWhenSelected}">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                                Margin="0,80,0,0">
+                                Margin="0,100,0,0">
                         <TextBlock Text="Select a group to get started"
                                    Style="{StaticResource EmptyStateTitleStyle}"
                                    Margin="0,0,0,8" />
@@ -500,35 +555,73 @@
                 </Border>
             </StackPanel>
 
-            <!-- App List or Empty Group State -->
-            <Grid Grid.Row="1" Margin="0,24,0,0">
-                <!-- App list when group has apps -->
-                <ItemsControl ItemsSource="{Binding SelectedGroupApps, Mode=OneWay}"
-                              Visibility="{Binding HasSelectedGroup, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource AppCardTemplate}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+            <!-- Main Inner Surface Panel for App List -->
+            <Border Grid.Row="1"
+                    Margin="0,0,0,0"
+                    Visibility="{Binding HasSelectedGroup, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}"
+                    CornerRadius="22"
+                    BorderThickness="1"
+                    Padding="28,8,28,8"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{StaticResource SurfaceElevatedBrush}"
+                    BorderBrush="{StaticResource CardBorderBrush}"
+                    ClipToBounds="False">
+                <Grid ClipToBounds="False">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  ClipToBounds="False">
+                        <ItemsControl ItemsSource="{Binding SelectedGroupApps, Mode=OneWay}"
+                                      ClipToBounds="False">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource AppCardTemplate}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
 
-                <!-- Empty group state: visible only when IsSelectedGroupEmpty is true -->
-                <ContentControl Content="{Binding}"
-                                ContentTemplate="{StaticResource EmptyGroupState}"
-                                Style="{StaticResource EmptyGroupStateVisibility}" />
-            </Grid>
-
-            <!-- Status Bar -->
-            <Border Grid.Row="2"
-                    Height="{StaticResource StatusBarHeight}"
-                    Background="{StaticResource SidebarBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="0,1,0,0">
-                <TextBlock Text="{Binding StatusMessage, Mode=OneWay, FallbackValue='Ready'}"
-                           Style="{StaticResource MutedTextStyle}"
-                           VerticalAlignment="Center"
-                           Margin="12,0" />
+                    <!-- Empty group state -->
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource EmptyGroupState}"
+                                    Style="{StaticResource EmptyGroupStateVisibility}" />
+                </Grid>
             </Border>
+
+            <!-- Status message area -->
+            <Grid Grid.Row="2"
+                  Height="24"
+                  Margin="0,4,0,0"
+                  Visibility="{Binding HasSelectedGroup, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                    <Image Source="/Assets/Kaldforge/kaldforge_icon_success_check.png"
+                           Width="16" Height="16"
+                           Stretch="Uniform"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"
+                           Opacity="0.7" />
+                    <TextBlock Text="{Binding StatusMessage, Mode=OneWay, FallbackValue='Ready'}"
+                               FontSize="12"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <TextBlock Grid.Column="2"
+                           Text="Kaldforge v1"
+                           FontSize="12"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           Opacity="0.5"
+                           VerticalAlignment="Center" />
+            </Grid>
         </Grid>
     </Grid>
 </Window>

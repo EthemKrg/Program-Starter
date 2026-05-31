@@ -1,42 +1,64 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- ── Primary Button ── -->
+    <!-- Phase 5H — Asset-Driven Premium Button System -->
+
+    <!-- ── Primary Button (Hero CTA — Start Group) ── -->
+    <!-- height: 48, min width: 146, radius: 14, 14px SemiBold -->
     <Style x:Key="PrimaryButtonStyle" TargetType="Button">
-        <Setter Property="Height" Value="36" />
-        <Setter Property="Padding" Value="20,0" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="MinWidth" Value="146" />
+        <Setter Property="Padding" Value="24,0" />
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
         <Setter Property="Background" Value="{StaticResource AccentBrush}" />
-        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="{StaticResource AccentMutedBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-        <Setter Property="RenderTransform">
-            <Setter.Value>
-                <ScaleTransform ScaleX="1" ScaleY="1" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="border"
+                    <Border x:Name="root"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8"
+                            CornerRadius="14"
                             RenderTransformOrigin="0.5,0.5">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                <TranslateTransform X="0" Y="0" />
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <Grid>
+                            <!-- Inner highlight: subtle lighter top edge -->
+                            <Border Height="1"
+                                    VerticalAlignment="Top"
+                                    Background="#30FFFFFF"
+                                    Opacity="0.5"
+                                    Margin="2,1,2,0" />
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="MouseEnter">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ColorAnimation Duration="0:0:0.15"
-                                                    Storyboard.TargetName="border"
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="{StaticResource AccentHover}" />
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource AccentHover}" />
+                                    <DoubleAnimation Duration="0:0:0.14"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="-1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -44,23 +66,33 @@
                             <BeginStoryboard>
                                 <Storyboard>
                                     <ColorAnimation Duration="0:0:0.2"
-                                                    Storyboard.TargetName="border"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="{StaticResource Accent}" />
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource AccentMuted}" />
+                                    <DoubleAnimation Duration="0:0:0.2"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="0" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Duration="0:0:0.08"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                     To="0.95" />
-                                    <DoubleAnimation Duration="0:0:0.08"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                     To="0.95" />
-                                    <ColorAnimation Duration="0:0:0.08"
-                                                    Storyboard.TargetName="border"
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="0.98" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="0.98" />
+                                    <ColorAnimation Duration="0:0:0.07"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="{StaticResource AccentPressed}" />
                                 </Storyboard>
@@ -69,24 +101,21 @@
                         <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Duration="0:0:0.15"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
                                                      To="1" />
-                                    <DoubleAnimation Duration="0:0:0.15"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
                                                      To="1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="border" Property="Background" Value="{StaticResource AccentMutedBrush}" />
+                            <Setter TargetName="root" Property="Background" Value="{StaticResource AccentMutedBrush}" />
                             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
                             <Setter Property="Opacity" Value="0.5" />
-                            <Setter Property="RenderTransform">
-                                <Setter.Value>
-                                    <ScaleTransform ScaleX="1" ScaleY="1" />
-                                </Setter.Value>
-                            </Setter>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -94,46 +123,54 @@
         </Setter>
     </Style>
 
-    <!-- ── Secondary Button ── -->
+    <!-- ── Secondary Button (Add App — border style) ── -->
+    <!-- height: 46, min width: 118, radius: 14, 14px SemiBold -->
     <Style x:Key="SecondaryButtonStyle" TargetType="Button">
-        <Setter Property="Height" Value="36" />
-        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="Height" Value="46" />
+        <Setter Property="MinWidth" Value="118" />
+        <Setter Property="Padding" Value="20,0" />
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="{StaticResource CardBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="1.5" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-        <Setter Property="RenderTransform">
-            <Setter.Value>
-                <ScaleTransform ScaleX="1" ScaleY="1" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="border"
+                    <Border x:Name="root"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            CornerRadius="14"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                <TranslateTransform X="0" Y="0" />
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="MouseEnter">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ColorAnimation Duration="0:0:0.15"
-                                                    Storyboard.TargetName="border"
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="{StaticResource CardHover}" />
-                                    <ColorAnimation Duration="0:0:0.15"
-                                                    Storyboard.TargetName="border"
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="BorderBrush.Color"
                                                     To="{StaticResource TextMuted}" />
+                                    <DoubleAnimation Duration="0:0:0.14"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="-1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -141,43 +178,51 @@
                             <BeginStoryboard>
                                 <Storyboard>
                                     <ColorAnimation Duration="0:0:0.2"
-                                                    Storyboard.TargetName="border"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
-                                                    To="Transparent" />
+                                                    To="{StaticResource Card}" />
                                     <ColorAnimation Duration="0:0:0.2"
-                                                    Storyboard.TargetName="border"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="BorderBrush.Color"
                                                     To="{StaticResource Border}" />
+                                    <DoubleAnimation Duration="0:0:0.2"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="0" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Duration="0:0:0.08"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                     To="0.95" />
-                                    <DoubleAnimation Duration="0:0:0.08"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                     To="0.95" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="0.98" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="0.98" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Duration="0:0:0.15"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
                                                      To="1" />
-                                    <DoubleAnimation Duration="0:0:0.15"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
                                                      To="1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
-                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+                            <Setter TargetName="root" Property="BorderBrush" Value="{StaticResource BorderBrush}" />
                             <Setter Property="Opacity" Value="0.55" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -186,41 +231,54 @@
         </Setter>
     </Style>
 
-    <!-- ── Neutral Button (Edit) ── -->
-    <Style x:Key="NeutralButtonStyle" TargetType="Button">
-        <Setter Property="Height" Value="32" />
-        <Setter Property="Padding" Value="12,0" />
+    <!-- ── Sidebar Add Group Button ── -->
+    <!-- height: 46, radius: 14, full width, 14px SemiBold -->
+    <Style x:Key="SidebarAddGroupButtonStyle" TargetType="Button">
+        <Setter Property="Height" Value="46" />
+        <Setter Property="Padding" Value="20,0" />
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
         <Setter Property="Background" Value="{StaticResource CardBrush}" />
-        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1.5" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-        <Setter Property="RenderTransform">
-            <Setter.Value>
-                <ScaleTransform ScaleX="1" ScaleY="1" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="border"
+                    <Border x:Name="root"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            CornerRadius="14"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                <TranslateTransform X="0" Y="0" />
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="MouseEnter">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ColorAnimation Duration="0:0:0.15"
-                                                    Storyboard.TargetName="border"
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="{StaticResource CardHover}" />
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource TextMuted}" />
+                                    <DoubleAnimation Duration="0:0:0.14"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="-1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -228,37 +286,169 @@
                             <BeginStoryboard>
                                 <Storyboard>
                                     <ColorAnimation Duration="0:0:0.2"
-                                                    Storyboard.TargetName="border"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="{StaticResource Card}" />
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource Border}" />
+                                    <DoubleAnimation Duration="0:0:0.2"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="0" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Duration="0:0:0.08"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                     To="0.95" />
-                                    <DoubleAnimation Duration="0:0:0.08"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                     To="0.95" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="0.98" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="0.98" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Duration="0:0:0.15"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
                                                      To="1" />
-                                    <DoubleAnimation Duration="0:0:0.15"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
                                                      To="1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter TargetName="root" Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+                            <Setter Property="Opacity" Value="0.55" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── Compact Primary Button (Start on card — compact primary) ── -->
+    <!-- height: 42, min width: 92, radius: 12, 14px -->
+    <Style x:Key="CompactPrimaryButtonStyle" TargetType="Button">
+        <Setter Property="Height" Value="42" />
+        <Setter Property="MinWidth" Value="92" />
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource AccentMutedBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="12"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                <TranslateTransform X="0" Y="0" />
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <Grid>
+                            <Border Height="1"
+                                    VerticalAlignment="Top"
+                                    Background="#30FFFFFF"
+                                    Opacity="0.5"
+                                    Margin="2,1,2,0" />
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource AccentHover}" />
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource AccentHover}" />
+                                    <DoubleAnimation Duration="0:0:0.14"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="-1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource Accent}" />
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource AccentMuted}" />
+                                    <DoubleAnimation Duration="0:0:0.2"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="0" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="0.98" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="0.98" />
+                                    <ColorAnimation Duration="0:0:0.07"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource AccentPressed}" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="1" />
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="root" Property="Background" Value="{StaticResource AccentMutedBrush}" />
                             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
                             <Setter Property="Opacity" Value="0.5" />
                         </Trigger>
@@ -268,46 +458,54 @@
         </Setter>
     </Style>
 
-    <!-- ── Danger Button (Delete/Remove) ── -->
-    <Style x:Key="DangerButtonStyle" TargetType="Button">
-        <Setter Property="Height" Value="32" />
-        <Setter Property="Padding" Value="12,0" />
+    <!-- ── Neutral Button (Edit — dark surface, border) ── -->
+    <!-- height: 40, min width: 86, radius: 12, 14px -->
+    <Style x:Key="NeutralButtonStyle" TargetType="Button">
+        <Setter Property="Height" Value="40" />
+        <Setter Property="MinWidth" Value="86" />
+        <Setter Property="Padding" Value="16,0" />
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
         <Setter Property="Background" Value="{StaticResource CardBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1.5" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-        <Setter Property="RenderTransform">
-            <Setter.Value>
-                <ScaleTransform ScaleX="1" ScaleY="1" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="border"
+                    <Border x:Name="root"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            CornerRadius="12"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                <TranslateTransform X="0" Y="0" />
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="MouseEnter">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ColorAnimation Duration="0:0:0.15"
-                                                    Storyboard.TargetName="border"
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
-                                                    To="{StaticResource DangerSurface}" />
-                                    <ColorAnimation Duration="0:0:0.15"
-                                                    Storyboard.TargetName="border"
+                                                    To="{StaticResource CardHover}" />
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="BorderBrush.Color"
-                                                    To="{StaticResource DangerHover}" />
+                                                    To="{StaticResource TextMuted}" />
+                                    <DoubleAnimation Duration="0:0:0.14"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="-1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -315,31 +513,145 @@
                             <BeginStoryboard>
                                 <Storyboard>
                                     <ColorAnimation Duration="0:0:0.2"
-                                                    Storyboard.TargetName="border"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="{StaticResource Card}" />
                                     <ColorAnimation Duration="0:0:0.2"
-                                                    Storyboard.TargetName="border"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="BorderBrush.Color"
-                                                    To="{StaticResource Danger}" />
+                                                    To="{StaticResource CardBorder}" />
+                                    <DoubleAnimation Duration="0:0:0.2"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="0" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Duration="0:0:0.08"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                     To="0.95" />
-                                    <DoubleAnimation Duration="0:0:0.08"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                     To="0.95" />
-                                    <ColorAnimation Duration="0:0:0.08"
-                                                    Storyboard.TargetName="border"
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="0.98" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="0.98" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="1" />
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter TargetName="root" Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── Danger Button (Remove — danger outline/dark surface) ── -->
+    <!-- height: 40, min width: 106, radius: 12, 14px -->
+    <Style x:Key="DangerButtonStyle" TargetType="Button">
+        <Setter Property="Height" Value="40" />
+        <Setter Property="MinWidth" Value="106" />
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+        <Setter Property="Background" Value="{StaticResource CardBrush}" />
+        <Setter Property="BorderThickness" Value="1.5" />
+        <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="12"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                <TranslateTransform X="0" Y="0" />
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource DangerSurface}" />
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource DangerHover}" />
+                                    <DoubleAnimation Duration="0:0:0.14"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="-1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource Card}" />
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource Danger}" />
+                                    <DoubleAnimation Duration="0:0:0.2"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[1].Y"
+                                                     To="0" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="0.98" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="0.98" />
+                                    <ColorAnimation Duration="0:0:0.07"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="#2F1517" />
-                                    <ColorAnimation Duration="0:0:0.08"
-                                                    Storyboard.TargetName="border"
+                                    <ColorAnimation Duration="0:0:0.07"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="BorderBrush.Color"
                                                     To="{StaticResource DangerPressed}" />
                                 </Storyboard>
@@ -348,18 +660,20 @@
                         <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Duration="0:0:0.15"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
                                                      To="1" />
-                                    <DoubleAnimation Duration="0:0:0.15"
-                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
                                                      To="1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
-                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+                            <Setter TargetName="root" Property="BorderBrush" Value="{StaticResource BorderBrush}" />
                             <Setter Property="Opacity" Value="0.5" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -368,41 +682,40 @@
         </Setter>
     </Style>
 
-    <!-- ── Ghost Button ── -->
+    <!-- ── Ghost Button (Sidebar actions — compact) ── -->
     <Style x:Key="GhostButtonStyle" TargetType="Button">
-        <Setter Property="Height" Value="28" />
-        <Setter Property="Width" Value="28" />
-        <Setter Property="Padding" Value="0" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="MinWidth" Value="32" />
+        <Setter Property="Padding" Value="6,0" />
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
-        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontSize" Value="12" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-        <Setter Property="RenderTransform">
-            <Setter.Value>
-                <ScaleTransform ScaleX="1" ScaleY="1" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="border"
+                    <Border x:Name="root"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="4"
+                            CornerRadius="6"
                             RenderTransformOrigin="0.5,0.5">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border.RenderTransform>
+                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                        </Border.RenderTransform>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="MouseEnter">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ColorAnimation Duration="0:0:0.12"
-                                                    Storyboard.TargetName="border"
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="{StaticResource CardHover}" />
                                 </Storyboard>
@@ -412,7 +725,7 @@
                             <BeginStoryboard>
                                 <Storyboard>
                                     <ColorAnimation Duration="0:0:0.18"
-                                                    Storyboard.TargetName="border"
+                                                    Storyboard.TargetName="root"
                                                     Storyboard.TargetProperty="Background.Color"
                                                     To="Transparent" />
                                 </Storyboard>
@@ -422,32 +735,438 @@
                             <BeginStoryboard>
                                 <Storyboard>
                                     <DoubleAnimation Duration="0:0:0.08"
+                                                     Storyboard.TargetName="root"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleX"
-                                                     To="0.90" />
+                                                     To="0.93" />
                                     <DoubleAnimation Duration="0:0:0.08"
+                                                     Storyboard.TargetName="root"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleY"
-                                                     To="0.90" />
+                                                     To="0.93" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <DoubleAnimation Duration="0:0:0.15"
+                                    <DoubleAnimation Duration="0:0:0.12"
+                                                     Storyboard.TargetName="root"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleX"
                                                      To="1" />
-                                    <DoubleAnimation Duration="0:0:0.15"
+                                    <DoubleAnimation Duration="0:0:0.12"
+                                                     Storyboard.TargetName="root"
                                                      Storyboard.TargetProperty="RenderTransform.ScaleY"
                                                      To="1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="{StaticResource SelectedSurfaceBrush}" />
+                            <Setter TargetName="root" Property="Background" Value="{StaticResource SelectedSurfaceBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.45" />
                             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── Dialog Primary Button (Save Changes / OK) ── -->
+    <!-- height: 44, min width: 148 -->
+    <Style x:Key="DialogPrimaryButtonStyle" TargetType="Button">
+        <Setter Property="Height" Value="44" />
+        <Setter Property="MinWidth" Value="148" />
+        <Setter Property="Padding" Value="24,0" />
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource AccentMutedBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="12"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                <TranslateTransform X="0" Y="0" />
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <Grid>
+                            <Border Height="1"
+                                    VerticalAlignment="Top"
+                                    Background="#30FFFFFF"
+                                    Opacity="0.5"
+                                    Margin="2,1,2,0" />
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource AccentHover}" />
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource AccentHover}" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource Accent}" />
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource AccentMuted}" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="0.98" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="0.98" />
+                                    <ColorAnimation Duration="0:0:0.07"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource AccentPressed}" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="1" />
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="root" Property="Background" Value="{StaticResource AccentMutedBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── Dialog Neutral Button (Cancel) ── -->
+    <!-- height: 44, min width: 96 -->
+    <Style x:Key="DialogNeutralButtonStyle" TargetType="Button">
+        <Setter Property="Height" Value="44" />
+        <Setter Property="MinWidth" Value="96" />
+        <Setter Property="Padding" Value="24,0" />
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Background" Value="{StaticResource CardBrush}" />
+        <Setter Property="BorderThickness" Value="1.5" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="12"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                <TranslateTransform X="0" Y="0" />
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource CardHover}" />
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource TextMuted}" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource Card}" />
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource Border}" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="0.985" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="0.985" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="1" />
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter TargetName="root" Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+                            <Setter Property="Opacity" Value="0.55" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── Dialog Danger Button (Confirm delete) ── -->
+    <!-- height: 44, min width: 136 -->
+    <Style x:Key="DialogDangerButtonStyle" TargetType="Button">
+        <Setter Property="Height" Value="44" />
+        <Setter Property="MinWidth" Value="136" />
+        <Setter Property="Padding" Value="24,0" />
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+        <Setter Property="Background" Value="{StaticResource CardBrush}" />
+        <Setter Property="BorderThickness" Value="1.5" />
+        <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="12"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                <TranslateTransform X="0" Y="0" />
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource DangerSurface}" />
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource DangerHover}" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource Card}" />
+                                    <ColorAnimation Duration="0:0:0.2"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource Danger}" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="0.985" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="0.985" />
+                                    <ColorAnimation Duration="0:0:0.07"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="#2F1517" />
+                                    <ColorAnimation Duration="0:0:0.07"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                                    To="{StaticResource DangerPressed}" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX"
+                                                     To="1" />
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY"
+                                                     To="1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                            <Setter TargetName="root" Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── Sidebar Action Button (Rename/Delete — icon-only, hover-reveal) ── -->
+    <!-- width: 30, height: 30, radius: 8, icon 18x18 -->
+    <Style x:Key="SidebarActionButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8"
+                            RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                        </Border.RenderTransform>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.14"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="{StaticResource CardHover}" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="0:0:0.18"
+                                                    Storyboard.TargetName="root"
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="Transparent" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                     To="0.98" />
+                                    <DoubleAnimation Duration="0:0:0.07"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                     To="0.98" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                     To="1" />
+                                    <DoubleAnimation Duration="0:0:0.11"
+                                                     Storyboard.TargetName="root"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                     To="1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

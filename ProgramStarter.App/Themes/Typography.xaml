@@ -5,7 +5,22 @@
     <FontFamily x:Key="DefaultFontFamily">Segoe UI</FontFamily>
     <FontFamily x:Key="MonoFontFamily">Consolas</FontFamily>
 
-    <!-- Main Title: 24px SemiBold -->
+    <!-- Group Title: 26px SemiBold -->
+    <Style x:Key="GroupTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="26" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+
+    <!-- Group Subtitle: 13px muted -->
+    <Style x:Key="GroupSubtitleStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+    </Style>
+
+    <!-- Main Title: 24px SemiBold (fallback) -->
     <Style x:Key="MainTitleStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
         <Setter Property="FontSize" Value="24" />
@@ -21,12 +36,29 @@
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
     </Style>
 
-    <!-- Card Title: 15px SemiBold -->
+    <!-- App Card Name: 18px SemiBold -->
     <Style x:Key="CardTitleStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
-        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontSize" Value="18" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+
+    <!-- App Path: 13px muted -->
+    <Style x:Key="PathTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+
+    <!-- Invalid path warning: 13px amber -->
+    <Style x:Key="InvalidPathStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
     </Style>
 
     <!-- Body Text: 13px Regular -->
@@ -43,15 +75,6 @@
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
     </Style>
 
-    <!-- Path Text: 12px Regular muted with ellipsis -->
-    <Style x:Key="PathTextStyle" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
-        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-        <Setter Property="TextWrapping" Value="NoWrap" />
-    </Style>
-
     <!-- Muted Text: 12px Regular -->
     <Style x:Key="MutedTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
@@ -59,17 +82,51 @@
         <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
     </Style>
 
-    <!-- Empty State Title: 18px SemiBold centered -->
-    <Style x:Key="EmptyStateTitleStyle" TargetType="TextBlock">
+    <!-- Sidebar brand title: 18px SemiBold -->
+    <Style x:Key="BrandTitleStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
         <Setter Property="FontSize" Value="18" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+
+    <!-- Sidebar brand subtitle: 12px muted -->
+    <Style x:Key="BrandSubtitleStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+    </Style>
+
+    <!-- Sidebar section label: 11px uppercase muted -->
+    <Style x:Key="SidebarSectionLabelStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+        <Setter Property="TextBlock.FontFamily" Value="{StaticResource DefaultFontFamily}" />
+    </Style>
+
+    <!-- Sidebar group name: 15px for Phase 5H premium feel -->
+    <Style x:Key="SidebarGroupNameStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Empty State Title: 23px SemiBold centered -->
+    <Style x:Key="EmptyStateTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize" Value="23" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="TextAlignment" Value="Center" />
     </Style>
 
-    <!-- Empty State Text: 14px Regular centered -->
+    <!-- Empty State Text: 14px muted centered -->
     <Style x:Key="EmptyStateTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
         <Setter Property="FontSize" Value="14" />
@@ -81,31 +138,31 @@
 
     <!-- ── Shared Dialog Styles ── -->
 
-    <!-- Dialog Title: 16px SemiBold -->
+    <!-- Dialog Title: 22px SemiBold -->
     <Style x:Key="DialogTitleStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
-        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontSize" Value="22" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-        <Setter Property="Margin" Value="0,0,0,12" />
+        <Setter Property="Margin" Value="0,0,0,22" />
     </Style>
 
-    <!-- Dialog Message: 13px Regular -->
+    <!-- Dialog Message: 14px Regular -->
     <Style x:Key="DialogMessageStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
         <Setter Property="TextWrapping" Value="Wrap" />
-        <Setter Property="Margin" Value="0,0,0,20" />
+        <Setter Property="Margin" Value="0,0,0,28" />
     </Style>
 
-    <!-- Dialog Field Label: 13px SemiBold -->
+    <!-- Dialog Field Label: 13px SemiBold muted -->
     <Style x:Key="DialogFieldLabelStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
-        <Setter Property="Margin" Value="0,0,0,4" />
+        <Setter Property="Margin" Value="0,0,0,8" />
     </Style>
 
     <!-- Dialog Validation Message: 11px Danger -->
@@ -117,16 +174,17 @@
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
-    <!-- Dialog TextBox: dark input with premium accent focus -->
+    <!-- Dialog TextBox: premium input with accent focus transition -->
     <Style x:Key="DialogTextBoxStyle" TargetType="TextBox">
         <Setter Property="Background" Value="{StaticResource CardBrush}" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="10,7" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="BorderThickness" Value="1.5" />
+        <Setter Property="Padding" Value="14,0" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Height" Value="46" />
         <Setter Property="CaretBrush" Value="{StaticResource AccentBrush}" />
-        <Setter Property="MinHeight" Value="34" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
@@ -134,7 +192,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6"
+                            CornerRadius="12"
                             RenderTransformOrigin="0.5,0.5">
                         <ScrollViewer x:Name="PART_ContentHost" Margin="2,0" />
                     </Border>
@@ -142,7 +200,7 @@
                         <EventTrigger RoutedEvent="GotFocus">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ColorAnimation Duration="0:0:0.15"
+                                    <ColorAnimation Duration="0:0:0.14"
                                                     Storyboard.TargetName="border"
                                                     Storyboard.TargetProperty="BorderBrush.Color"
                                                     To="{StaticResource Accent}" />

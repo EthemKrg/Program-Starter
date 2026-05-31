@@ -2,34 +2,64 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
-    <!-- Layout dimensions from UI Style Brief -->
-    <sys:Double x:Key="SidebarWidth">240</sys:Double>
-    <sys:Double x:Key="MainContentPadding">32</sys:Double>
-    <sys:Double x:Key="SectionSpacing">24</sys:Double>
-    <sys:Double x:Key="CardPadding">16</sys:Double>
-    <sys:Double x:Key="CardVerticalGap">12</sys:Double>
-    <sys:Double x:Key="ButtonHeight">36</sys:Double>
+    <!-- Phase 5H — Asset-Driven Premium Dimensions -->
+    <sys:Double x:Key="SidebarWidth">280</sys:Double>
+    <sys:Double x:Key="MainContentPadding">40</sys:Double>
+    <sys:Double x:Key="MainContentTopPadding">36</sys:Double>
+    <sys:Double x:Key="SectionSpacing">28</sys:Double>
+    <sys:Double x:Key="CardPadding">22</sys:Double>
+    <sys:Double x:Key="CardVerticalGap">16</sys:Double>
+
+    <!-- Button heights per Phase 5H spec -->
+    <sys:Double x:Key="PrimaryButtonHeight">46</sys:Double>
+    <sys:Double x:Key="SecondaryButtonHeight">46</sys:Double>
+    <sys:Double x:Key="SidebarAddGroupHeight">46</sys:Double>
+    <sys:Double x:Key="CompactPrimaryHeight">40</sys:Double>
+    <sys:Double x:Key="NeutralButtonHeight">40</sys:Double>
+    <sys:Double x:Key="DangerButtonHeight">40</sys:Double>
     <sys:Double x:Key="SmallButtonHeight">32</sys:Double>
-    <sys:Double x:Key="StatusBarHeight">28</sys:Double>
+    <sys:Double x:Key="DialogButtonHeight">44</sys:Double>
+    <sys:Double x:Key="DialogTextBoxHeight">46</sys:Double>
+    <sys:Double x:Key="DialogBrowseButtonHeight">46</sys:Double>
+    <sys:Double x:Key="DialogContentWidth">580</sys:Double>
+    <sys:Double x:Key="StatusBarHeight">24</sys:Double>
+
+    <!-- Min widths per Phase 5J spec -->
+    <sys:Double x:Key="PrimaryButtonMinWidth">146</sys:Double>
+    <sys:Double x:Key="SecondaryButtonMinWidth">124</sys:Double>
+    <sys:Double x:Key="CompactPrimaryMinWidth">92</sys:Double>
+    <sys:Double x:Key="NeutralButtonMinWidth">86</sys:Double>
+    <sys:Double x:Key="DangerButtonMinWidth">106</sys:Double>
+    <sys:Double x:Key="DialogPrimaryMinWidth">148</sys:Double>
+    <sys:Double x:Key="DialogNeutralMinWidth">96</sys:Double>
+    <sys:Double x:Key="DialogBrowseMinWidth">118</sys:Double>
 
     <!-- Thickness resources -->
-    <Thickness x:Key="MainContentPaddingThickness">32</Thickness>
-    <Thickness x:Key="CardPaddingThickness">16</Thickness>
-    <Thickness x:Key="SidebarItemPadding">12,8</Thickness>
-    <Thickness x:Key="ButtonPaddingWide">20,0</Thickness>
+    <Thickness x:Key="MainContentPaddingThickness">40,36,40,28</Thickness>
+    <Thickness x:Key="CardPaddingThickness">22</Thickness>
+    <Thickness x:Key="SidebarPadding">18,24,18,18</Thickness>
+    <Thickness x:Key="SidebarItemPadding">12,10</Thickness>
+    <Thickness x:Key="DialogPadding">32</Thickness>
+    <Thickness x:Key="ButtonPaddingPrimary">24,0</Thickness>
+    <Thickness x:Key="ButtonPaddingSecondary">20,0</Thickness>
     <Thickness x:Key="ButtonPadding">16,0</Thickness>
-    <Thickness x:Key="ButtonPaddingSmall">12,0</Thickness>
-    <Thickness x:Key="DialogPadding">24</Thickness>
+    <Thickness x:Key="ButtonPaddingSmall">14,0</Thickness>
+    <Thickness x:Key="ButtonPaddingCompact">16,0</Thickness>
+    <Thickness x:Key="ButtonPaddingGhost">0</Thickness>
+    <Thickness x:Key="DialogButtonSpacing">0,0,12,0</Thickness>
 
     <!-- Spacing margin resources -->
-    <Thickness x:Key="SectionSpacingBottom">0,0,0,24</Thickness>
-    <Thickness x:Key="CardSpacingBottom">0,0,0,12</Thickness>
+    <Thickness x:Key="SectionSpacingBottom">0,0,0,28</Thickness>
+    <Thickness x:Key="CardSpacingBottom">0,0,0,16</Thickness>
+    <Thickness x:Key="DialogFieldSpacing">0,0,0,22</Thickness>
+    <Thickness x:Key="DialogBottomActionSpacing">0,28,0,0</Thickness>
 
-    <!-- Sidebar separator style -->
+    <!-- Sidebar separator style — simple 1px line -->
     <Style x:Key="SidebarSeparator" TargetType="Rectangle">
         <Setter Property="Height" Value="1" />
         <Setter Property="Fill" Value="{StaticResource BorderBrush}" />
-        <Setter Property="Margin" Value="0,8" />
+        <Setter Property="Opacity" Value="0.55" />
+        <Setter Property="Margin" Value="0,18,0,16" />
     </Style>
 
 </ResourceDictionary>
