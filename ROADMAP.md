@@ -1,10 +1,10 @@
 # Program Starter - Architecture & Roadmap
 
-**Document Version:** Iteration 5  
+**Document Version:** Iteration 6  
 **Target Version:** v0.1 Foundation Release  
 **Platform:** Windows  
 **Primary Goal:** Build a reliable, maintainable, visually clean Windows desktop launcher for starting predefined application groups with one click.  
-**Review Status:** Final senior-hardened roadmap with UI polish rules, suitable for AI-agent implementation with strict phase control.
+**Review Status:** Final senior-hardened roadmap with integrated frontend/UI style brief, suitable for AI-agent implementation with strict phase control.
 
 ---
 
@@ -1538,6 +1538,158 @@ Reason:
 v0.1 needs a clean launcher, not a UI framework experiment.
 ```
 
+
+### 18.15 Frontend Design Direction Brief
+
+This section defines the visual target for Phase 5 UI polish. It should guide design decisions without expanding v0.1 product scope.
+
+#### Goal
+
+Create a premium but calm Windows launcher UI. It should feel like a clean developer/productivity tool, not a hobby prototype.
+
+#### Visual Direction
+
+```text
+Dark
+Minimal
+Clean spacing
+Subtle borders
+Soft cards
+One restrained accent color
+No visual noise
+```
+
+#### Final Palette Target
+
+```text
+Background: #0D1117
+Sidebar:    #111827
+Card:       #161B22
+Border:     #2A3441
+Text:       #E5E7EB
+Muted Text: #8B949E
+Accent:     #7C8CFF
+Danger:     #EF4444
+```
+
+Accent usage must stay restrained. Use it only for:
+
+```text
+Primary button
+Selected group
+Focus border
+Small active indicator
+```
+
+Do not overuse accent color across large surfaces.
+
+#### Layout Rules
+
+```text
+Sidebar width:   240px
+Content padding: 32px
+Card radius:     12px
+Button radius:   8px
+Spacing scale:   8 / 12 / 16 / 24 / 32
+```
+
+#### Sidebar Target
+
+```text
+Top: Program Starter title
+Middle: Group list
+Selected group: subtle accent border + dark selected surface
+Bottom: Add Group ghost/secondary button
+```
+
+Avoid icon clutter. Do not add group icons in v0.1 unless using a very simple generic placeholder.
+
+#### Main Content Target
+
+When a group is selected:
+
+```text
+Header:
+Group Name
+Small subtitle: "3 apps in this group"
+
+Right side:
++ Add App button
+```
+
+App cards should show:
+
+```text
+App name
+Path as muted small text
+Run button
+Small edit/delete actions
+```
+
+#### Empty State Target
+
+No groups:
+
+```text
+No groups yet
+Create your first launch group.
+[Create Group]
+```
+
+Empty group:
+
+```text
+No apps in this group yet
+Add your first app to start building this launch group.
+[Add App]
+```
+
+Icons should be optional and simple. Avoid placeholder-looking symbols.
+
+#### Button Rules
+
+```text
+Primary:   Accent background
+Secondary: Transparent with border
+Ghost:     Text only or subtle hover background
+Danger:    Red only for destructive confirmation
+```
+
+Disabled buttons should be visibly disabled but still readable.
+
+#### Dialog Rules
+
+Dialogs should be small, direct, and consistent:
+
+```text
+Card background
+Clear title
+Single input where possible
+Cancel + Confirm actions
+Danger confirm style for delete flows
+Inline validation message
+```
+
+#### Do Not Implement in v0.1
+
+```text
+Custom title bar
+Blur/glass effects
+Heavy animation
+Third-party UI framework
+Theme editor
+Settings screen
+Complex design system
+```
+
+#### Agent Design Instruction
+
+Use this instruction for Phase 5 UI polish:
+
+```text
+Use a premium calm dark desktop UI style inspired by high-end minimal product design: clean spacing, subtle borders, strong typography hierarchy, soft cards, one restrained accent color, and no visual clutter. Do not copy any specific designer or product.
+```
+
 ## 19. UX Rules
 
 ### General
@@ -1854,6 +2006,7 @@ Goal: Make the app feel clean, intentional, and usable without expanding scope.
 
 Tasks:
 
+- Apply the frontend design direction from Section 18.15.
 - Apply dark theme from resource dictionaries.
 - Style sidebar with clear selected and hover states.
 - Style primary, secondary, neutral, danger, and disabled buttons.
@@ -2508,7 +2661,20 @@ Iteration 5 keeps the Iteration 4 foundation and adds final UI quality and agent
 
 ---
 
-## 30. Final Direction
+
+## 30. Iteration 6 Senior Change Summary
+
+Iteration 6 keeps the Iteration 5 technical roadmap and integrates the standalone frontend/UI style direction into the roadmap:
+
+```text
+1. Add Section 18.15 Frontend Design Direction Brief.
+2. Define final premium calm dark UI target without expanding v0.1 scope.
+3. Add restrained color palette, spacing, sidebar, main content, empty state, button, and dialog rules.
+4. Add explicit anti-scope-creep UI restrictions: no custom chrome, blur/glass effects, theme editor, settings screen, heavy animation, or third-party UI framework.
+5. Update Phase 5 to use Section 18.15 as the UI polish target.
+```
+
+## 31. Final Direction
 
 Program Starter should be built as a small, reliable Windows desktop tool.
 

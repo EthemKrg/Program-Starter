@@ -23,6 +23,9 @@ public partial class App : Application
         services.AddSingleton<IAppLogger, FileAppLogger>();
         services.AddSingleton<IConfigService, JsonConfigService>();
 
+        // Phase 2 - Real implementations
+        services.AddSingleton<IDialogService, WpfDialogService>();
+
         // Phase 3 stub implementations (replaced by real implementations in Phase 3)
         services.AddSingleton<IFileDialogService, StubFileDialogService>();       // TODO: Replace with FileDialogService in Phase 3
         services.AddSingleton<IPathValidationService, StubPathValidationService>(); // TODO: Replace with PathValidationService in Phase 3
