@@ -285,7 +285,6 @@ These features must not be implemented in v0.1.
 System tray
 Auto-start with Windows
 Drag and drop ordering
-App icon extraction
 Run as administrator
 Per-app launch arguments UI
 Working directory UI
@@ -368,7 +367,6 @@ Possible features:
 
 Possible features:
 
-- Extract real app icons
 - Group icons
 - Accent color setting
 - Theme customization
@@ -446,6 +444,7 @@ ProgramStarter/
 │   │   ├── FileDialogService.cs
 │   │   ├── IPathValidationService.cs
 │   │   ├── PathValidationService.cs
+│   │   ├── IconExtractionService.cs
 │   │   ├── IAppLogger.cs
 │   │   └── FileAppLogger.cs
 │   │
@@ -1526,7 +1525,6 @@ Avoid:
 Custom window chrome
 Animated page transitions
 Third-party UI libraries
-Complex icon extraction
 Full settings screen
 Theme editor
 Over-fragmented custom controls
@@ -2018,7 +2016,7 @@ Tasks:
 - Add status area.
 - Improve spacing using shared layout resources.
 - Improve typography using shared typography resources.
-- Add simple placeholder app icon only; do not extract real app icons in v0.1.
+- Extract real app icons from executable paths using [`IconExtractionService`](ProgramStarter.App/Services/IconExtractionService.cs).
 - Ensure long app paths are trimmed/ellipsized and do not break layout.
 - Ensure delete/destructive actions are visually distinct.
 - Validate published single-file build renders resources correctly.
@@ -2122,7 +2120,6 @@ These rules are mandatory when using AI coding agents.
 - Do not add `.lnk` support in v0.1.
 - Do not add tray support in v0.1.
 - Do not add startup integration in v0.1.
-- Do not add app icon extraction in v0.1.
 - Do not add run-as-admin support in v0.1.
 - Do not add installer work in v0.1.
 - Do not add auto-update in v0.1.
@@ -2213,7 +2210,6 @@ Do not implement:
 - .lnk shortcut support
 - system tray
 - Windows startup integration
-- app icon extraction
 - run as admin
 - installer
 - auto-update
@@ -2407,7 +2403,7 @@ Implement Phase X only: [phase name].
 
 Hard rules:
 - Do not implement features outside Phase X.
-- Do not add .lnk support, tray, startup integration, icon extraction, installer, URL launching, run-as-admin, drag/drop ordering, theme editor, or settings screen.
+- Do not add .lnk support, tray, startup integration, installer, URL launching, run-as-admin, drag/drop ordering, theme editor, or settings screen.
 - Follow MVVM.
 - Keep business logic out of code-behind.
 - Use constructor injection.
@@ -2462,7 +2458,6 @@ Do not implement:
 - Settings screen
 - Theme editor
 - Custom window chrome
-- App icon extraction
 - Advanced animations
 - Third-party UI framework
 - New navigation system
@@ -2651,7 +2646,7 @@ Iteration 5 keeps the Iteration 4 foundation and adds final UI quality and agent
 4. Add explicit UI quality bar so the app does not ship as default WPF.
 5. Add long-path trimming/ellipsis requirement.
 6. Add sidebar, app card, empty state, invalid path, dialog, and launching state rules.
-7. Keep UI polish simple: no third-party UI frameworks, custom chrome, theme editor, advanced animations, or icon extraction.
+7. Keep UI polish simple: no third-party UI frameworks, custom chrome, theme editor, or advanced animations.
 8. Expand Phase 5 with practical UI polish tasks.
 9. Add recommended AI agent workflow for Codex/DeepSeek/reviewer usage.
 10. Add DeepSeek builder prompt template.

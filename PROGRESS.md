@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Program Starter is in active development. The config persistence layer, group management, app management, and launching are complete.
+Program Starter is in active development. The config persistence layer, group management, app management, launching, and UI polish are complete.
 
 Current completed checkpoints:
 
@@ -11,8 +11,9 @@ Current completed checkpoints:
 - Phase 2: Group CRUD Foundation
 - Phase 3: App Management
 - Phase 4: Launching
+- Phase 5: UI Polish
 
-Next: Phase 5 - UI Polish
+Next: Phase 6 - v0.1 Stabilization
 
 ## Phase 0 Summary
 
@@ -130,6 +131,65 @@ Phase 4 implemented reliable app and group launching:
   - ViewModel LaunchGroup: success, mixed results, app validation fails mid-group
 - [`Stubs.cs`](ProgramStarter.App/Services/Stubs.cs) deleted after real implementations completed
 
+## Phase 5 Summary
+
+Phase 5 implemented the final UI polish pass with real EXE icon extraction, brand area scaling, and header group action buttons:
+
+### Brand Area Fix
+
+- [`MainWindow.xaml`](ProgramStarter.App/MainWindow.xaml) sidebar brand block updated:
+  - Brand icon tile: 56x56 → **64x64**, corner radius 15 → **18**
+  - Brand image: 42x42 → **46x46**
+  - Brand block height: 76 → **86**
+  - Brand title ("Kaldforge"): font size 18 → **20** (via [`Typography.xaml`](ProgramStarter.App/Themes/Typography.xaml) `BrandTitleStyle`)
+- [`Typography.xaml`](ProgramStarter.App/Themes/Typography.xaml): `BrandTitleStyle` font size updated from 18 to 20, SemiBold
+
+### Real EXE Icon Extraction
+
+- [`IconExtractionService`](ProgramStarter.App/Services/IconExtractionService.cs) — New static service for extracting real executable icons:
+  - Uses `System.Drawing.Icon.ExtractAssociatedIcon(filePath)` to get the native Windows icon from any `.exe` or shortcut
+  - Converts GDI icon to WPF `ImageSource` via `Imaging.CreateBitmapSourceFromHBitmap`
+  - Frees GDI handles via `NativeMethods.DeleteObject` (gdi32.dll P/Invoke)
+  - Freezes `ImageSource` for cross-thread safety
+  - Caches extracted icons in `ConcurrentDictionary<string, ImageSource?>` (thread-safe, in-memory)
+  - `GetIcon(string? filePath)` — main entry point, returns cached icon or null on failure
+  - `InvalidatePath(string path)` / `ClearCache()` — cache management
+  - Added `System.Drawing.Common` NuGet package for icon extraction API
+- [`AppEntryItemViewModel`](ProgramStarter.App/ViewModels/AppEntryItemViewModel.cs) — New `IconSource` property:
+  - Lazy one-time resolution via `IconExtractionService.GetIcon(Path)`
+  - Returns null if extraction fails (XAML DataTrigger handles fallback to Kaldforge icon)
+  - `InvalidateIcon()` method resets cached icon when path changes
+  - Fires `OnPropertyChanged(nameof(IconSource))` in `Path` setter
+- [`MainWindow.xaml`](ProgramStarter.App/MainWindow.xaml) app card icon binding:
+  - Icon column width: 76 → **80**
+  - Removed hardcoded Kaldforge icon source; now binds to `{Binding IconSource}`
+  - `DataTrigger` binding on `IconSource` with `x:Null` test falls back to Kaldforge divider crystal amber icon
+  - Image size inside tile: 32x32 → **44x44**
+
+### Group Edit/Delete Buttons in Header
+
+- Group action buttons (Rename Group, Delete Group) confirmed already present in header layout at correct positions (Rename → Delete → Start Group → Add App)
+- No structural changes needed; button dimensions updated:
+  - [`Buttons.xaml`](ProgramStarter.App/Themes/Buttons.xaml): `HeaderIconButtonStyle` width/height: 38 → **40**
+  - [`Buttons.xaml`](ProgramStarter.App/Themes/Buttons.xaml): `HeaderDangerIconButtonStyle` width/height: 38 → **40**
+
+### App Card Scaling
+
+- [`Cards.xaml`](ProgramStarter.App/Themes/Cards.xaml): `AppCardStyle` height: 100 → **104**, MinHeight: 100 → **104**
+- [`Cards.xaml`](ProgramStarter.App/Themes/Cards.xaml): `AppIconTileStyle` width/height: 56 → **64**
+- App card icon tile: 64×64 with 44×44 image inside, radius 12
+- App card corner radius: 20, padding: 20
+- App name: 18px SemiBold, path: 13px muted
+- Button widths: Start 92px, Edit 84px, Remove 96px (unchanged from prior styling, already matching spec)
+
+### Verification
+
+- [`ProgramStarter.App.csproj`](ProgramStarter.App/ProgramStarter.App.csproj) — Added `System.Drawing.Common` package reference
+- `dotnet build` — **0 errors, 0 warnings**
+- `dotnet test` — **All tests pass**
+
+---
+
 ### Phase 4 Review Fixes Applied
 
 The following fixes were applied after Phase 4 implementation review:
@@ -180,5 +240,5 @@ Test summary by category:
 | Phase 2 | Group CRUD Foundation | ✅ Complete |
 | Phase 3 | App Management | ✅ Complete |
 | Phase 4 | Launching | ✅ Complete |
-| Phase 5 | UI Polish | ⬜ Not started |
+| Phase 5 | UI Polish | ✅ Complete |
 | Phase 6 | v0.1 Stabilization | ⬜ Not started |

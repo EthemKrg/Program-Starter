@@ -25,10 +25,9 @@
                     Background="{StaticResource AccentSurfaceBrush}"
                     BorderBrush="{StaticResource AccentMutedBrush}"
                     BorderThickness="1"
-                    Margin="0,0,14,0"
                     VerticalAlignment="Center">
                 <Image Source="/Assets/Kaldforge/kaldforge_icon_launch_tile.png"
-                       Width="36" Height="36"
+                       Width="34" Height="34"
                        Stretch="Uniform"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center" />
@@ -70,17 +69,17 @@
              <Button Grid.Column="1"
                      Style="{StaticResource NeutralButtonStyle}"
                      Margin="12,0,0,0"
-                     Height="46"
-                     MinWidth="118"
+                     Height="44"
+                     MinWidth="108"
                      Padding="18,0"
                      FontSize="14"
                      Click="OnBrowseClick">
                  <StackPanel Orientation="Horizontal">
-                     <Image Source="/Assets/Kaldforge/kaldforge_icon_browse_folder.png"
-                            Width="18" Height="18"
-                            Stretch="Uniform"
-                            VerticalAlignment="Center"
-                            Margin="0,0,8,0" />
+                     <TextBlock Text="&#xED25;"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="14"
+                                VerticalAlignment="Center"
+                                Margin="0,0,8,0" />
                      <TextBlock Text="Browse" VerticalAlignment="Center" />
                  </StackPanel>
              </Button>

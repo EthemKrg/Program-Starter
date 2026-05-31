@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
-    <!-- Phase 5H — Asset-Driven Premium Dimensions -->
-    <sys:Double x:Key="SidebarWidth">280</sys:Double>
+    <!-- Phase 5K — Final Premium Dimensions -->
+    <sys:Double x:Key="SidebarWidth">272</sys:Double>
     <sys:Double x:Key="MainContentPadding">40</sys:Double>
     <sys:Double x:Key="MainContentTopPadding">36</sys:Double>
     <sys:Double x:Key="SectionSpacing">28</sys:Double>
@@ -19,8 +19,8 @@
     <sys:Double x:Key="DangerButtonHeight">40</sys:Double>
     <sys:Double x:Key="SmallButtonHeight">32</sys:Double>
     <sys:Double x:Key="DialogButtonHeight">44</sys:Double>
-    <sys:Double x:Key="DialogTextBoxHeight">46</sys:Double>
-    <sys:Double x:Key="DialogBrowseButtonHeight">46</sys:Double>
+    <sys:Double x:Key="DialogTextBoxHeight">44</sys:Double>
+    <sys:Double x:Key="DialogBrowseButtonHeight">44</sys:Double>
     <sys:Double x:Key="DialogContentWidth">580</sys:Double>
     <sys:Double x:Key="StatusBarHeight">24</sys:Double>
 

@@ -82,10 +82,10 @@
         <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
     </Style>
 
-    <!-- Sidebar brand title: 18px SemiBold -->
+    <!-- Sidebar brand title: 20px SemiBold -->
     <Style x:Key="BrandTitleStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontFamily}" />
-        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontSize" Value="20" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
     </Style>
@@ -182,7 +182,7 @@
         <Setter Property="BorderThickness" Value="1.5" />
         <Setter Property="Padding" Value="14,0" />
         <Setter Property="FontSize" Value="14" />
-        <Setter Property="Height" Value="46" />
+        <Setter Property="Height" Value="44" />
         <Setter Property="CaretBrush" Value="{StaticResource AccentBrush}" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
