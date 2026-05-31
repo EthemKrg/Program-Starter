@@ -1,9 +1,9 @@
-<Window x:Class="ProgramStarter.App.Views.Dialogs.TextInputDialog"
+<Window x:Class="ProgramStarter.App.Views.Dialogs.AppEditDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Name="DialogRoot"
-        Title="{Binding Title, Mode=OneWay}"
-        MinWidth="400" MaxWidth="500"
+        Title="Edit App"
+        MinWidth="480" MaxWidth="560"
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
@@ -17,13 +17,13 @@
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-            <Setter Property="Margin" Value="0,0,0,8" />
-        </Style>
-        <Style x:Key="DialogMessageStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
-            <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Margin" Value="0,0,0,16" />
+        </Style>
+        <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="Margin" Value="0,0,0,4" />
         </Style>
         <Style x:Key="DialogTextBoxStyle" TargetType="TextBox">
             <Setter Property="Background" Value="{StaticResource CardBrush}" />
@@ -35,19 +35,48 @@
             <Setter Property="CaretBrush" Value="{StaticResource TextPrimaryBrush}" />
             <Setter Property="MinHeight" Value="32" />
         </Style>
+        <Style x:Key="ValidationMessageStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
     </Window.Resources>
 
     <StackPanel Margin="20">
-        <TextBlock Text="{Binding Title, Mode=OneWay}" Style="{StaticResource DialogTitleStyle}" />
-        <TextBlock Text="{Binding Message, Mode=OneWay}" Style="{StaticResource DialogMessageStyle}" />
+        <TextBlock Text="Edit App" Style="{StaticResource DialogTitleStyle}" />
 
-        <TextBox x:Name="InputTextBox"
-                 Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
+        <!-- Name -->
+        <TextBlock Text="Name" Style="{StaticResource FieldLabelStyle}" />
+        <TextBox x:Name="NameTextBox"
+                 Text="{Binding AppName, UpdateSourceTrigger=PropertyChanged}"
                  Style="{StaticResource DialogTextBoxStyle}"
-                 Margin="0,0,0,20"
-                 KeyDown="OnInputKeyDown" />
+                 Margin="0,0,0,4"
+                 KeyDown="OnNameKeyDown" />
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <!-- Path -->
+        <TextBlock Text="Path" Style="{StaticResource FieldLabelStyle}" Margin="0,12,0,4" />
+        <Grid Margin="0,0,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0"
+                     x:Name="PathTextBox"
+                     Text="{Binding AppPath, UpdateSourceTrigger=PropertyChanged}"
+                     Style="{StaticResource DialogTextBoxStyle}"
+                     IsReadOnly="False"
+                     KeyDown="OnPathKeyDown" />
+            <Button Grid.Column="1"
+                    Content="Browse"
+                    Style="{StaticResource NeutralButtonStyle}"
+                    Margin="8,0,0,0"
+                    Padding="12,6"
+                    Click="OnBrowseClick" />
+        </Grid>
+
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
             <Button Content="Cancel"
                     Style="{StaticResource NeutralButtonStyle}"
                     IsCancel="True"

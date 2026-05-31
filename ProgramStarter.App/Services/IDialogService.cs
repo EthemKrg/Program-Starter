@@ -17,4 +17,10 @@ public interface IDialogService
     /// Returns true if the user confirmed, false if cancelled.
     /// </summary>
     bool ShowConfirmDialog(string title, string message);
+
+    /// <summary>
+    /// Shows a modal app edit dialog with name and path fields and a Browse button.
+    /// Returns an AppEditResult if confirmed, or null if cancelled.
+    /// </summary>
+    AppEditResult? ShowAppEditDialog(string currentName, string currentPath);
 }

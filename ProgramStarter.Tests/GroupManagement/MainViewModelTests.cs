@@ -50,7 +50,7 @@ public class MainViewModelTests : IDisposable
         var fakeConfig = new FakeConfigService(settings);
 
         // Act
-        var vm = new MainViewModel(fakeConfig, new FakeDialogService(), new FakeLogger());
+        var vm = CreateViewModel(fakeConfig);
 
         // Assert
         Assert.Same(groupB, vm.SelectedGroup);
@@ -73,7 +73,7 @@ public class MainViewModelTests : IDisposable
         var fakeConfig = new FakeConfigService(settings);
 
         // Act
-        var vm = new MainViewModel(fakeConfig, new FakeDialogService(), new FakeLogger());
+        var vm = CreateViewModel(fakeConfig);
 
         // Assert
         Assert.Null(vm.SelectedGroup);
@@ -94,7 +94,7 @@ public class MainViewModelTests : IDisposable
         var fakeConfig = new FakeConfigService(settings);
 
         // Act
-        var vm = new MainViewModel(fakeConfig, new FakeDialogService(), new FakeLogger());
+        var vm = CreateViewModel(fakeConfig);
 
         // Assert
         Assert.False(vm.HasGroups);
@@ -134,7 +134,7 @@ public class MainViewModelTests : IDisposable
         };
         var fakeConfig = new FakeConfigService(settings);
         var fakeDialog = new FakeDialogService { NextTextInputResult = "Games" };
-        var vm = new MainViewModel(fakeConfig, fakeDialog, new FakeLogger());
+        var vm = CreateViewModel(fakeConfig, fakeDialog);
 
         // Act
         vm.AddGroupCommand.Execute(null);
@@ -171,7 +171,7 @@ public class MainViewModelTests : IDisposable
         var settings = new AppSettings { Groups = new List<AppGroup> { group } };
         var fakeConfig = new FakeConfigService(settings);
         var fakeDialog = new FakeDialogService { NextTextInputResult = "NewName" };
-        var vm = new MainViewModel(fakeConfig, fakeDialog, new FakeLogger());
+        var vm = CreateViewModel(fakeConfig, fakeDialog);
 
         // Act
         vm.RenameGroupCommand.Execute(group);
@@ -190,7 +190,7 @@ public class MainViewModelTests : IDisposable
         var settings = new AppSettings { Groups = new List<AppGroup> { groupA, groupB } };
         var fakeConfig = new FakeConfigService(settings);
         var fakeDialog = new FakeDialogService { NextTextInputResult = "Work" }; // duplicate
-        var vm = new MainViewModel(fakeConfig, fakeDialog, new FakeLogger());
+        var vm = CreateViewModel(fakeConfig, fakeDialog);
 
         // Act
         vm.RenameGroupCommand.Execute(groupA); // try renaming "Games" to "Work"
@@ -208,7 +208,7 @@ public class MainViewModelTests : IDisposable
         var settings = new AppSettings { Groups = new List<AppGroup> { group } };
         var fakeConfig = new FakeConfigService(settings);
         var fakeDialog = new FakeDialogService { NextTextInputResult = null }; // cancelled
-        var vm = new MainViewModel(fakeConfig, fakeDialog, new FakeLogger());
+        var vm = CreateViewModel(fakeConfig, fakeDialog);
 
         // Act
         vm.RenameGroupCommand.Execute(group);
@@ -229,7 +229,7 @@ public class MainViewModelTests : IDisposable
         var settings = new AppSettings { Groups = new List<AppGroup> { group } };
         var fakeConfig = new FakeConfigService(settings);
         var fakeDialog = new FakeDialogService { NextConfirmResult = true };
-        var vm = new MainViewModel(fakeConfig, fakeDialog, new FakeLogger());
+        var vm = CreateViewModel(fakeConfig, fakeDialog);
 
         // Act
         vm.DeleteGroupCommand.Execute(group);
@@ -248,10 +248,9 @@ public class MainViewModelTests : IDisposable
         var settings = new AppSettings { Groups = new List<AppGroup> { group } };
         var fakeConfig = new FakeConfigService(settings);
         var fakeDialog = new FakeDialogService { NextConfirmResult = true };
-        var vm = new MainViewModel(fakeConfig, fakeDialog, new FakeLogger());
+        var vm = CreateViewModel(fakeConfig, fakeDialog);
 
-        // Pre-condition: the group is auto-selected on load (no last-selected, so null)
-        // Select it first so the delete logic sees it as selected
+        // Pre-condition: select it first so the delete logic sees it as selected
         vm.SelectedGroup = group;
 
         // Act
@@ -277,7 +276,7 @@ public class MainViewModelTests : IDisposable
         };
         var fakeConfig = new FakeConfigService(settings);
         var fakeDialog = new FakeDialogService { NextConfirmResult = true };
-        var vm = new MainViewModel(fakeConfig, fakeDialog, new FakeLogger());
+        var vm = CreateViewModel(fakeConfig, fakeDialog);
 
         // Pre-condition
         Assert.Same(groupB, vm.SelectedGroup);
@@ -298,7 +297,7 @@ public class MainViewModelTests : IDisposable
         var settings = new AppSettings { Groups = new List<AppGroup> { group } };
         var fakeConfig = new FakeConfigService(settings);
         var fakeDialog = new FakeDialogService { NextConfirmResult = false }; // cancelled
-        var vm = new MainViewModel(fakeConfig, fakeDialog, new FakeLogger());
+        var vm = CreateViewModel(fakeConfig, fakeDialog);
 
         // Act
         vm.DeleteGroupCommand.Execute(group);
@@ -325,7 +324,7 @@ public class MainViewModelTests : IDisposable
             DefaultDelayMilliseconds = 5000
         };
         var fakeConfig = new FakeConfigService(settings);
-        var vm = new MainViewModel(fakeConfig, new FakeDialogService(), new FakeLogger());
+        var vm = CreateViewModel(fakeConfig);
 
         // Act - add a group, which triggers SaveConfig
         vm.AddGroupCommand.Execute(null);
@@ -341,6 +340,28 @@ public class MainViewModelTests : IDisposable
     //  Helpers
     // ──────────────────────────────────────────────
 
+    private static MainViewModel CreateViewModel(
+        FakeConfigService? config = null,
+        FakeDialogService? dialog = null,
+        FakeFileDialogService? fileDialog = null,
+        FakePathValidationService? pathValidation = null,
+        FakeLogger? logger = null)
+    {
+        var settings = config?.LoadedSettings ?? new AppSettings
+        {
+            Groups = new List<AppGroup>(),
+            Theme = "Dark",
+            DefaultDelayMilliseconds = 1000
+        };
+        var fakeConfig = config ?? new FakeConfigService(settings);
+        return new MainViewModel(
+            fakeConfig,
+            dialog ?? new FakeDialogService(),
+            fileDialog ?? new FakeFileDialogService(),
+            pathValidation ?? new FakePathValidationService(),
+            logger ?? new FakeLogger());
+    }
+
     private static MainViewModel CreateViewModelWithEmptyConfig(FakeDialogService? fakeDialog = null)
     {
         var settings = new AppSettings
@@ -350,7 +371,12 @@ public class MainViewModelTests : IDisposable
             DefaultDelayMilliseconds = 1000
         };
         var fakeConfig = new FakeConfigService(settings);
-        return new MainViewModel(fakeConfig, fakeDialog ?? new FakeDialogService(), new FakeLogger());
+        return new MainViewModel(
+            fakeConfig,
+            fakeDialog ?? new FakeDialogService(),
+            new FakeFileDialogService(),
+            new FakePathValidationService(),
+            new FakeLogger());
     }
 }
 
@@ -371,11 +397,45 @@ internal class FakeDialogService : IDialogService
     /// </summary>
     public bool NextConfirmResult { get; set; } = true;
 
+    /// <summary>
+    /// The value to return from the next ShowAppEditDialog call.
+    /// Set to null to simulate cancellation.
+    /// </summary>
+    public AppEditResult? NextAppEditResult { get; set; } = new AppEditResult("TestApp", @"C:\Test\app.exe");
+
     public string? ShowTextInputDialog(string title, string message, string initialValue = "")
         => NextTextInputResult;
 
     public bool ShowConfirmDialog(string title, string message)
         => NextConfirmResult;
+
+    public AppEditResult? ShowAppEditDialog(string currentName, string currentPath)
+        => NextAppEditResult;
+}
+
+internal class FakeFileDialogService : IFileDialogService
+{
+    /// <summary>
+    /// The path to return from OpenFileDialog. Set to null to simulate cancellation.
+    /// </summary>
+    public string? NextPath { get; set; } = @"C:\Test\app.exe";
+
+    public string? OpenFileDialog(string title, string filter) => NextPath;
+}
+
+internal class FakePathValidationService : IPathValidationService
+{
+    public bool IsValidAppPathResult { get; set; } = true;
+    public bool IsSupportedExtensionResult { get; set; } = true;
+    public bool FileExistsResult { get; set; } = true;
+    public (bool IsValid, string ErrorMessage) ValidateForLaunchResult { get; set; } = (true, string.Empty);
+    public (bool IsValid, string ErrorMessage) ValidateForAddResult { get; set; } = (true, string.Empty);
+
+    public bool IsValidAppPath(string? path) => IsValidAppPathResult;
+    public bool IsSupportedExtension(string? path) => IsSupportedExtensionResult;
+    public bool FileExists(string? path) => FileExistsResult;
+    public (bool IsValid, string ErrorMessage) ValidateForLaunch(string? path) => ValidateForLaunchResult;
+    public (bool IsValid, string ErrorMessage) ValidateForAdd(string path, string appName, AppGroup group, AppEntry? excludeApp = null) => ValidateForAddResult;
 }
 
 internal class FakeConfigService : IConfigService
@@ -386,6 +446,11 @@ internal class FakeConfigService : IConfigService
     /// The last settings object passed to <see cref="Save"/>.
     /// </summary>
     public AppSettings? LastSavedSettings { get; private set; }
+
+    /// <summary>
+    /// The settings this service was initialized with.
+    /// </summary>
+    public AppSettings LoadedSettings => _initialSettings;
 
     public FakeConfigService(AppSettings initialSettings)
     {

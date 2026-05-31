@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows.Input;
 using ProgramStarter.App.Commands;
 using ProgramStarter.App.Helpers;
@@ -11,6 +12,8 @@ public class MainViewModel : BaseViewModel
 {
     private readonly IConfigService _configService;
     private readonly IDialogService _dialogService;
+    private readonly IFileDialogService _fileDialogService;
+    private readonly IPathValidationService _pathValidationService;
     private readonly IAppLogger _logger;
 
     private bool _isLoading;
@@ -25,6 +28,8 @@ public class MainViewModel : BaseViewModel
 
     public ObservableCollection<AppGroup> Groups { get; } = new();
 
+    public int SelectedGroupAppCount => SelectedGroup?.Apps.Count ?? 0;
+
     public AppGroup? SelectedGroup
     {
         get => _selectedGroup;
@@ -33,12 +38,21 @@ public class MainViewModel : BaseViewModel
             if (SetProperty(ref _selectedGroup, value))
             {
                 OnPropertyChanged(nameof(HasSelectedGroup));
+                OnPropertyChanged(nameof(SelectedGroupAppCount));
+                PopulateSelectedGroupApps();
                 if (!_isLoading)
                 {
                     SaveConfig();
                 }
             }
         }
+    }
+
+    private ObservableCollection<AppEntryItemViewModel> _selectedGroupApps = new();
+    public ObservableCollection<AppEntryItemViewModel> SelectedGroupApps
+    {
+        get => _selectedGroupApps;
+        set => SetProperty(ref _selectedGroupApps, value);
     }
 
     public string StatusMessage
@@ -66,15 +80,31 @@ public class MainViewModel : BaseViewModel
     public ICommand RenameGroupCommand { get; }
     public ICommand DeleteGroupCommand { get; }
 
-    public MainViewModel(IConfigService configService, IDialogService dialogService, IAppLogger logger)
+    // App CRUD commands
+    public ICommand AddAppCommand { get; }
+    public ICommand EditAppCommand { get; }
+    public ICommand RemoveAppCommand { get; }
+
+    public MainViewModel(
+        IConfigService configService,
+        IDialogService dialogService,
+        IFileDialogService fileDialogService,
+        IPathValidationService pathValidationService,
+        IAppLogger logger)
     {
         _configService = configService;
         _dialogService = dialogService;
+        _fileDialogService = fileDialogService;
+        _pathValidationService = pathValidationService;
         _logger = logger;
 
         AddGroupCommand = new RelayCommand(ExecuteAddGroup);
         RenameGroupCommand = new RelayCommand(ExecuteRenameGroup);
         DeleteGroupCommand = new RelayCommand(ExecuteDeleteGroup);
+
+        AddAppCommand = new RelayCommand(ExecuteAddApp, _ => HasSelectedGroup);
+        EditAppCommand = new RelayCommand(ExecuteEditApp);
+        RemoveAppCommand = new RelayCommand(ExecuteRemoveApp);
 
         _isLoading = true;
         _logger.Info("MainViewModel initializing.");
@@ -116,6 +146,18 @@ public class MainViewModel : BaseViewModel
     public void UpdateHasGroups()
     {
         HasGroups = Groups.Count > 0;
+    }
+
+    private void PopulateSelectedGroupApps()
+    {
+        SelectedGroupApps.Clear();
+        if (SelectedGroup is null)
+            return;
+
+        foreach (var app in SelectedGroup.Apps)
+        {
+            SelectedGroupApps.Add(new AppEntryItemViewModel(app, _pathValidationService));
+        }
     }
 
     // ──────────────────────────────────────────────
@@ -229,6 +271,125 @@ public class MainViewModel : BaseViewModel
         SaveConfig();
         StatusMessage = $"Group \"{group.Name}\" deleted.";
         _logger.Info($"Group deleted: {group.Name} ({group.Id})");
+    }
+
+    // ──────────────────────────────────────────────
+    //  Add App
+    // ──────────────────────────────────────────────
+
+    private void ExecuteAddApp(object? parameter)
+    {
+        if (SelectedGroup is null)
+            return;
+
+        var selectedPath = _fileDialogService.OpenFileDialog(
+            "Select an application",
+            "Executable files (*.exe)|*.exe");
+
+        if (selectedPath is null)
+            return;
+
+        var autoName = Path.GetFileNameWithoutExtension(selectedPath) ?? "New App";
+
+        var confirmedName = _dialogService.ShowTextInputDialog(
+            "Add App",
+            "Confirm or edit the app name.",
+            autoName);
+
+        if (confirmedName is null)
+            return;
+
+        var trimmedName = confirmedName.Trim();
+        var (isValid, errorMessage) = _pathValidationService.ValidateForAdd(selectedPath, trimmedName, SelectedGroup);
+
+        if (!isValid)
+        {
+            StatusMessage = errorMessage;
+            _logger.Warning($"Add app validation failed: {errorMessage}");
+            return;
+        }
+
+        var entry = new AppEntry
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = trimmedName,
+            Path = selectedPath,
+            IsEnabled = true
+        };
+
+        SelectedGroup.Apps.Add(entry);
+        OnPropertyChanged(nameof(SelectedGroupAppCount));
+        PopulateSelectedGroupApps();
+        SaveConfig();
+
+        StatusMessage = $"App \"{trimmedName}\" added.";
+        _logger.Info($"App added: {trimmedName} ({entry.Id}) to group {SelectedGroup.Name}");
+    }
+
+    // ──────────────────────────────────────────────
+    //  Edit App
+    // ──────────────────────────────────────────────
+
+    private void ExecuteEditApp(object? parameter)
+    {
+        if (parameter is not AppEntryItemViewModel appVm)
+            return;
+
+        if (SelectedGroup is null)
+            return;
+
+        var result = _dialogService.ShowAppEditDialog(appVm.Name, appVm.Path);
+
+        if (result is null)
+            return;
+
+        var trimmedName = result.Name.Trim();
+        var trimmedPath = result.Path.Trim();
+
+        var (isValid, errorMessage) = _pathValidationService.ValidateForAdd(trimmedPath, trimmedName, SelectedGroup, excludeApp: appVm.Model);
+
+        if (!isValid)
+        {
+            StatusMessage = errorMessage;
+            _logger.Warning($"Edit app validation failed: {errorMessage}");
+            return;
+        }
+
+        appVm.Name = trimmedName;
+        appVm.Path = trimmedPath;
+        PopulateSelectedGroupApps();
+        SaveConfig();
+
+        StatusMessage = $"App \"{trimmedName}\" updated.";
+        _logger.Info($"App updated: \"{trimmedName}\" ({appVm.Id})");
+    }
+
+    // ──────────────────────────────────────────────
+    //  Remove App
+    // ──────────────────────────────────────────────
+
+    private void ExecuteRemoveApp(object? parameter)
+    {
+        if (parameter is not AppEntryItemViewModel appVm)
+            return;
+
+        if (SelectedGroup is null)
+            return;
+
+        var confirmed = _dialogService.ShowConfirmDialog(
+            "Remove App",
+            $"Remove \"{appVm.Name}\" from this group?\nThis will not uninstall the application from your computer.");
+
+        if (!confirmed)
+            return;
+
+        SelectedGroup.Apps.Remove(appVm.Model);
+        OnPropertyChanged(nameof(SelectedGroupAppCount));
+        PopulateSelectedGroupApps();
+        SaveConfig();
+
+        StatusMessage = $"App \"{appVm.Name}\" removed.";
+        _logger.Info($"App removed: {appVm.Name} ({appVm.Id}) from group {SelectedGroup.Name}");
     }
 
     // ──────────────────────────────────────────────

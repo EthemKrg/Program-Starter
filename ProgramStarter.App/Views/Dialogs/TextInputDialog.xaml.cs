@@ -32,6 +32,7 @@ public partial class TextInputDialog : Window
     private void OnOkClick(object sender, RoutedEventArgs e)
     {
         var text = InputTextBox.Text?.Trim() ?? string.Empty;
+
         if (text.Length == 0)
             return;
 
